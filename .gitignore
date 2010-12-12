@@ -1,0 +1,35 @@
+# Ignore the output folder.
+build
+
+# Ignore all */bin/ and */obj/ folders...
+bin/
+obj/
+
+# ...except the root bin folder (used for build tools and etc.).
+!/bin/
+
+# Ignore backup files.
+*.orig
+
+# Ignore all Visual Studio generated files.
+*.suo
+*.user
+*.ncb
+_ReSharper.*
+
+# Ignore all MonoDevelop generated files.
+*.userprefs
+*.pidb
+
+# Ignore all Operating System generated files.
+Thumbs.db
+
+# Ignore all Test Suite status files.
+TestResult.xml
+*.VisualState.xml
+
+# Ignore some other things, too.
+src/Tools/SparkLanguagePackage/*_i.c
+src/Tools/SparkLanguagePackage/*_i.h
+src/Tools/SparkLanguagePackage/*_p.c
+src/Tools/SparkLanguagePackage/PackageLoadKey.h
