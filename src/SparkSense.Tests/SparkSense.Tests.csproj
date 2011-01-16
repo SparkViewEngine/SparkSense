@@ -103,6 +103,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Scenarios\Compiling\CompilingIncompleteCode.cs" />
+    <Compile Include="Scenarios\Parsing\SyntaxParsingScenario.cs" />
+    <Compile Include="Scenarios\Parsing\ParsingIncompleteCode.cs" />
+    <Compile Include="Scenarios\Scenario.cs" />
     <Compile Include="Parsing\CachingViewFolderTests.cs" />
     <Compile Include="Parsing\ParseContextChunkTests.cs" />
     <Compile Include="Parsing\ParseContextNodeTests.cs" />
@@ -111,6 +115,8 @@
     <Compile Include="Parsing\TypeResolutionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Parsing\SparkSyntaxTests.cs" />
+    <Compile Include="Scenarios\Compiling\SyntaxCompilationScenario.cs" />
+    <Compile Include="SpecificationExtensions.cs" />
     <Compile Include="StatementCompletion\CompletionSessionTests.cs" />
     <Compile Include="StatementCompletion\AttributeCompletionSetTests.cs" />
     <Compile Include="StatementCompletion\ExpressionCompletionSetTests.cs" />
@@ -136,6 +142,7 @@
       <Name>SparkSense</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
