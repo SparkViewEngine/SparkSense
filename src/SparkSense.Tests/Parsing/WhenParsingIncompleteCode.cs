@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
 using Spark.Parser.Markup;
+using SparkSense.Tests.Scenarios;
 
-namespace SparkSense.Tests.Scenarios.Parsing
+namespace SparkSense.Tests.Parsing
 {
-    public class ParsingIncompleteCode : SyntaxParsingScenario
+    public class WhenParsingIncompleteCode : SyntaxParsingScenario
     {
         [Test]
         public void ShouldCorrectlyParseIncompleteCodeAfterBangSyntax()

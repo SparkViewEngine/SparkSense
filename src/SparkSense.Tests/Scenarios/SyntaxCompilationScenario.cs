@@ -4,14 +4,14 @@ using Spark.Compiler.NodeVisitors;
 using Spark.FileSystem;
 using SparkSense.Parser;
 
-namespace SparkSense.Tests.Scenarios.Compiling
+namespace SparkSense.Tests.Scenarios
 {
     public class SyntaxCompilationScenario : Scenario
     {
         private CompletionSyntaxProvider _syntaxProvider;
         private VisitorContext _context;
 
-        protected IList<Chunk> TheParsedChunks { get; set; }
+        protected IList<Chunk> TheParsedChunks { get; private set; }
 
         protected void GivenSomeContentToCompile(string content)
         {

@@ -18,5 +18,8 @@ namespace SparkSense.Tests.Scenarios
         }
 
         #endregion
+
+        [Test]
+        public void ShouldNotBeIgnoredByTestRunner() { }
     }
 }

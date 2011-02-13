@@ -2,7 +2,7 @@
 using Spark.Parser.Markup;
 using SparkSense.Parser;
 
-namespace SparkSense.Tests.Scenarios.Parsing
+namespace SparkSense.Tests.Scenarios
 {
     public class SyntaxParsingScenario : Scenario
     {

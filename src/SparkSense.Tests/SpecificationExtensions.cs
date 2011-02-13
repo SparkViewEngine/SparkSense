@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
@@ -32,6 +33,20 @@ namespace SparkSense.Tests
         public static IEnumerable<T> ShouldHaveCount<T>(this IEnumerable<T> values, int count)
         {
             Assert.AreEqual(count, values.Count());
+            return values;
+        }
+
+        public static T ShouldContain<T>(this IEnumerable<T> values, Func<T, bool> predicate)
+        {
+            var found= values.FirstOrDefault(predicate);
+            Assert.IsNotNull(found);
+            return found;
+        }
+
+        public static IEnumerable<T> ShouldNotContain<T>(this IEnumerable<T> values, Func<T, bool> predicate)
+        {
+            var found = values.FirstOrDefault(predicate);
+            Assert.IsNull(found);
             return values;
         }
     }

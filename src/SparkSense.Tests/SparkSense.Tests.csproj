@@ -75,6 +75,7 @@
     <Reference Include="Microsoft.VisualStudio.CoreUtility, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Editor, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Language.Intellisense, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.ManagedInterfaces.WCF, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.VisualStudio.Shell, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Shell.Design, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -103,19 +104,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Scenarios\Compiling\CompilingIncompleteCode.cs" />
-    <Compile Include="Scenarios\Parsing\SyntaxParsingScenario.cs" />
-    <Compile Include="Scenarios\Parsing\ParsingIncompleteCode.cs" />
+    <Compile Include="Compiling\WhenCompilingIncompleteCode.cs" />
+    <Compile Include="Scenarios\SyntaxParsingScenario.cs" />
+    <Compile Include="Parsing\WhenParsingIncompleteCode.cs" />
     <Compile Include="Scenarios\Scenario.cs" />
     <Compile Include="Parsing\CachingViewFolderTests.cs" />
     <Compile Include="Parsing\ParseContextChunkTests.cs" />
     <Compile Include="Parsing\ParseContextNodeTests.cs" />
     <Compile Include="Parsing\ParseMultipleNodeTests.cs" />
     <Compile Include="Parsing\ParseSingleNodeTests.cs" />
-    <Compile Include="Parsing\TypeResolutionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Parsing\SparkSyntaxTests.cs" />
-    <Compile Include="Scenarios\Compiling\SyntaxCompilationScenario.cs" />
+    <Compile Include="Scenarios\SyntaxCompilationScenario.cs" />
+    <Compile Include="Scenarios\TypeResolutionScenario.cs" />
+    <Compile Include="TypeResolution\WhenResolvingInstanceMembers.cs" />
+    <Compile Include="TypeResolution\WhenResolvingStaticMembers.cs" />
     <Compile Include="SpecificationExtensions.cs" />
     <Compile Include="StatementCompletion\CompletionSessionTests.cs" />
     <Compile Include="StatementCompletion\AttributeCompletionSetTests.cs" />

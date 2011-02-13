@@ -1,11 +1,12 @@
 ﻿using NUnit.Framework;
 using Spark.Compiler;
+using SparkSense.Tests.Scenarios;
 
-namespace SparkSense.Tests.Scenarios.Compiling
+namespace SparkSense.Tests.Compiling
 {
-    public class CompilingIncompleteCode : SyntaxCompilationScenario
+    public class WhenCompilingIncompleteCode : SyntaxCompilationScenario
     {
-        public CompilingIncompleteCode()
+        public WhenCompilingIncompleteCode()
         {
             GivenSomeContentToCompile(@"<div>${user.</div>");
             WhenCompilingIntoCodeSnippitChunks();
