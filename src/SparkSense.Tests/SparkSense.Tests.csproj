@@ -117,6 +117,7 @@
     <Compile Include="Parsing\SparkSyntaxTests.cs" />
     <Compile Include="Scenarios\SyntaxCompilationScenario.cs" />
     <Compile Include="Scenarios\TypeResolutionScenario.cs" />
+    <Compile Include="TypeResolution\WhenResolvingMethods.cs" />
     <Compile Include="TypeResolution\WhenResolvingInstanceMembers.cs" />
     <Compile Include="TypeResolution\WhenResolvingStaticMembers.cs" />
     <Compile Include="SpecificationExtensions.cs" />

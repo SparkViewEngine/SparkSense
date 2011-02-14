@@ -18,6 +18,8 @@ namespace SparkSense.Tests.Scenarios
         }
 
         protected IEnumerable<MemberInfo> TheResolvedMembers { get; private set; }
+        
+        protected IEnumerable<MethodInfo> TheResolvedMethods { get; private set; }
 
         protected void GivenReferencedTypes(ICollection types)
         {
@@ -33,6 +35,11 @@ namespace SparkSense.Tests.Scenarios
         protected void WhenLookingUpInstanceMembers()
         {
             TheResolvedMembers = _typeResolver.GetInstanceMembers();
+        }
+
+        protected void WhenLookingUpMethods(string methodName)
+        {
+            TheResolvedMethods = _typeResolver.GetMethodByName(methodName);
         }
 
         protected void WhenLookingUpSomeCode(string codeSnippit)
@@ -55,6 +62,21 @@ namespace SparkSense.Tests.Scenarios
             }
 
             public string StubInstanceMethod()
+            {
+                return string.Empty;
+            }
+
+            public string StubMethodWithParameters(string param1)
+            {
+                return string.Empty;
+            }
+
+            public string StubMethodWithParameters(string param1, int param2)
+            {
+                return string.Empty;
+            }
+
+            public string StubMethodWithParameters(string param1, int param2, StubType param3)
             {
                 return string.Empty;
             }

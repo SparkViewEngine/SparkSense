@@ -35,5 +35,10 @@ namespace SparkSense.Parsing
         {
             return Types.SelectMany(t => t.Members(_commonFlags | Flags.InstanceAnyVisibility));
         }
+
+        public IEnumerable<MethodInfo> GetMethodByName(string methodName)
+        {
+            return Types.SelectMany(t => t.Methods(_commonFlags | Flags.StaticInstanceAnyVisibility, new[] {methodName}));
+        }
     }
 }

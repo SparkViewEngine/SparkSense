@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Reflection;
+using NUnit.Framework;
 using SparkSense.Tests.Scenarios;
 
 namespace SparkSense.Tests.TypeResolution
@@ -24,21 +25,27 @@ namespace SparkSense.Tests.TypeResolution
         public void ShouldResolvePublicInstanceField()
         {
             TheResolvedMembers
-                .ShouldContain(m => m.Name == "StubInstanceField");
+                .ShouldContain(m => m.Name == "StubInstanceField")
+                .MemberType
+                .ShouldBe(MemberTypes.Field);
         }
 
         [Test]
         public void ShouldResolvePublicInstanceMethod()
         {
             TheResolvedMembers
-                .ShouldContain(m => m.Name == "StubInstanceMethod");
+                .ShouldContain(m => m.Name == "StubInstanceMethod")
+                .MemberType
+                .ShouldBe(MemberTypes.Method);
         }
 
         [Test]
         public void ShouldResolvePublicInstanceProperty()
         {
             TheResolvedMembers
-                .ShouldContain(m => m.Name == "StubInstanceProperty");
+                .ShouldContain(m => m.Name == "StubInstanceProperty")
+                .MemberType
+                .ShouldBe(MemberTypes.Property);
         }
     }
 }

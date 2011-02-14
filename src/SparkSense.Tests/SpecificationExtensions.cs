@@ -19,9 +19,10 @@ namespace SparkSense.Tests
             return value;
         }
 
-        public static void ShouldBe<T>(this T actualValue, T expectedValue)
+        public static T ShouldBe<T>(this T actualValue, T expectedValue)
         {
             Assert.That(actualValue, Is.EqualTo(expectedValue));
+            return actualValue;
         }
 
         public static T ShouldBeOfType<T>(this object value) where T : class
