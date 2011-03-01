@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Reflection;
@@ -17,14 +18,21 @@ namespace SparkSense.Tests.Scenarios
             _typeDiscoveryService = MockRepository.GenerateMock<ITypeDiscoveryService>();
         }
 
+        protected IEnumerable<Type> TheResolvedTriggerTypes { get; private set; }
+
         protected IEnumerable<MemberInfo> TheResolvedMembers { get; private set; }
-        
+
         protected IEnumerable<MethodInfo> TheResolvedMethods { get; private set; }
 
         protected void GivenReferencedTypes(ICollection types)
         {
             _typeResolver = new TypeResolver(_typeDiscoveryService);
             _typeDiscoveryService.Stub(x => x.GetTypes(typeof (object), true)).Return(types);
+        }
+
+        protected void WhenLookingUpTriggerTypes()
+        {
+            TheResolvedTriggerTypes = _typeResolver.GetTriggerTypes();
         }
 
         protected void WhenLookingUpStaticMembers()
@@ -44,6 +52,18 @@ namespace SparkSense.Tests.Scenarios
 
         protected void WhenLookingUpSomeCode(string codeSnippit)
         {
+        }
+
+        public class StubTypeWithNoStatics
+        {
+            public string StubInstanceField;
+
+            public string StubInstanceProperty { get; set; }
+
+            public string StubInstanceMethod()
+            {
+                return string.Empty;
+            }
         }
 
         public class StubType

@@ -40,5 +40,10 @@ namespace SparkSense.Parsing
         {
             return Types.SelectMany(t => t.Methods(_commonFlags | Flags.StaticInstanceAnyVisibility, new[] {methodName}));
         }
+
+        public IEnumerable<Type> GetTriggerTypes()
+        {
+            return Types.Where(t => t.Members(_commonFlags | Flags.StaticAnyVisibility).Count > 0);            
+        }
     }
 }

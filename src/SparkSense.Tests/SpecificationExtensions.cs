@@ -27,7 +27,7 @@ namespace SparkSense.Tests
 
         public static T ShouldBeOfType<T>(this object value) where T : class
         {
-            Assert.That(value.GetType(), Is.EqualTo(typeof (T)));
+            Assert.That(value.GetType(), Is.EqualTo(typeof(T)));
             return value as T;
         }
 
@@ -37,17 +37,23 @@ namespace SparkSense.Tests
             return values;
         }
 
+        public static IEnumerable<T> ShouldHaveCount<T>(this IEnumerable<T> values, int count, Func<T, bool> predicate)
+        {
+            ShouldHaveCount(values.Where(predicate), count);
+            return values;
+        }
+
         public static T ShouldContain<T>(this IEnumerable<T> values, Func<T, bool> predicate)
         {
-            var found= values.FirstOrDefault(predicate);
-            Assert.IsNotNull(found);
+            var found = values.FirstOrDefault(predicate);
+            Assert.IsNotNull(found, string.Format("Expected item was not found in the values supplied."));
             return found;
         }
 
         public static IEnumerable<T> ShouldNotContain<T>(this IEnumerable<T> values, Func<T, bool> predicate)
         {
             var found = values.FirstOrDefault(predicate);
-            Assert.IsNull(found);
+            Assert.IsNull(found, "Unexpected item was found in the values supplied.");
             return values;
         }
     }
