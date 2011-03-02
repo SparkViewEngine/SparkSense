@@ -11,7 +11,7 @@ namespace SparkSense.Tests.Scenarios
     public class TypeResolutionScenario : Scenario
     {
         private readonly ITypeDiscoveryService _typeDiscoveryService;
-        private TypeResolver _typeResolver;
+        private TypeNavigator _typeNavigator;
 
         public TypeResolutionScenario()
         {
@@ -26,28 +26,28 @@ namespace SparkSense.Tests.Scenarios
 
         protected void GivenReferencedTypes(ICollection types)
         {
-            _typeResolver = new TypeResolver(_typeDiscoveryService);
+            _typeNavigator = new TypeNavigator(_typeDiscoveryService);
             _typeDiscoveryService.Stub(x => x.GetTypes(typeof (object), true)).Return(types);
         }
 
         protected void WhenLookingUpTriggerTypes()
         {
-            TheResolvedTriggerTypes = _typeResolver.GetTriggerTypes();
+            TheResolvedTriggerTypes = _typeNavigator.GetTriggerTypes();
         }
 
         protected void WhenLookingUpStaticMembers()
         {
-            TheResolvedMembers = _typeResolver.GetStaticMembers();
+            TheResolvedMembers = _typeNavigator.GetStaticMembers();
         }
 
         protected void WhenLookingUpInstanceMembers()
         {
-            TheResolvedMembers = _typeResolver.GetInstanceMembers();
+            TheResolvedMembers = _typeNavigator.GetInstanceMembers();
         }
 
         protected void WhenLookingUpMethods(string methodName)
         {
-            TheResolvedMethods = _typeResolver.GetMethodByName(methodName);
+            TheResolvedMethods = _typeNavigator.GetMethodByName(methodName);
         }
 
         protected void WhenLookingUpSomeCode(string codeSnippit)

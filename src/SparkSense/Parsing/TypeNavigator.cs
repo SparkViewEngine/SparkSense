@@ -7,17 +7,29 @@ using Fasterflect;
 
 namespace SparkSense.Parsing
 {
-    public class TypeResolver
+    public class TypeNavigator
     {
+        private readonly Flags _commonFlags;
         private readonly ITypeDiscoveryService _typeDiscoveryService;
         private IEnumerable<Type> _types;
-        private readonly Flags _commonFlags;
 
-        public TypeResolver(ITypeDiscoveryService typeDiscoveryService)
+        public TypeNavigator(ITypeDiscoveryService typeDiscoveryService)
+            : this()
         {
             if (typeDiscoveryService == null) throw new ArgumentNullException("typeDiscoveryService");
             _typeDiscoveryService = typeDiscoveryService;
-            _types = _typeDiscoveryService.GetTypes(typeof(object), true) as IEnumerable<Type>;
+            _types = _typeDiscoveryService.GetTypes(typeof (object), true) as IEnumerable<Type>;
+        }
+
+        public TypeNavigator(IEnumerable<Type> types)
+            : this()
+        {
+            if (types == null) throw new ArgumentNullException("types");
+            _types = types;
+        }
+
+        private TypeNavigator()
+        {
             _commonFlags = Flags.Public | Flags.ExcludeBackingMembers | Flags.TrimExplicitlyImplemented;
         }
 
@@ -43,7 +55,7 @@ namespace SparkSense.Parsing
 
         public IEnumerable<Type> GetTriggerTypes()
         {
-            return Types.Where(t => t.Members(_commonFlags | Flags.StaticAnyVisibility).Count > 0);            
+            return Types.Where(t => t.Members(_commonFlags | Flags.StaticAnyVisibility).Count > 0);
         }
     }
 }

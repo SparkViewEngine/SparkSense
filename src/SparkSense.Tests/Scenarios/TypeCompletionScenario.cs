@@ -10,16 +10,14 @@ namespace SparkSense.Tests.Scenarios
 
         protected void WhenTriggeringAnInitialCompletion()
         {
-            var completionBuilder = new CompletionBuilder();
-            WhenLookingUpTriggerTypes();
-            TheCompletionList = completionBuilder.ToCompletionList(TheResolvedTriggerTypes);
+            WhenTriggeringACompletion(string.Empty);
         }
 
-        protected void WhenTriggeringACompletionFromAPoint(string continuation)
+        protected void WhenTriggeringACompletion(string startingPoint)
         {
             var completionBuilder = new CompletionBuilder();
             WhenLookingUpTriggerTypes();
-            TheCompletionList = completionBuilder.ToCompletionList(TheResolvedTriggerTypes, continuation);            
+            TheCompletionList = completionBuilder.ToCompletionList(TheResolvedTriggerTypes, startingPoint);            
         }
     }
 }

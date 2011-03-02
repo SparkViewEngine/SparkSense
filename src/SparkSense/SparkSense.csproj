@@ -123,7 +123,7 @@
     <Compile Include="Parsing\IViewExplorer.cs" />
     <Compile Include="Parsing\ParsingExtensions.cs" />
     <Compile Include="Parsing\SparkSyntax.cs" />
-    <Compile Include="Parsing\TypeResolver.cs" />
+    <Compile Include="Parsing\TypeNavigator.cs" />
     <Compile Include="Presenter\SparkSenseView.xaml.cs">
       <DependentUpon>SparkSenseView.xaml</DependentUpon>
     </Compile>
