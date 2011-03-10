@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using Spark;
 using SparkSense.Tests.Scenarios;
 
 namespace SparkSense.Tests.TypeCompletion
@@ -8,7 +9,7 @@ namespace SparkSense.Tests.TypeCompletion
     {
         public WhenTriggeringTypeCompletion()
         {
-            GivenReferencedTypes(new[] {typeof (StubType), typeof(StubTypeWithNoStatics), typeof (String), typeof (Int32)});
+            GivenReferencedTypes(new[] {typeof (StubType), typeof(StubTypeWithNoStatics), typeof (String), typeof (Int32), typeof(SparkViewBase)});
         }
 
         [Test]
@@ -55,6 +56,13 @@ namespace SparkSense.Tests.TypeCompletion
             TheCompletionList.ShouldContain(c => c.DisplayText == "StubStaticField");
             TheCompletionList.ShouldContain(c => c.DisplayText == "StubStaticMethod");
             TheCompletionList.ShouldContain(c => c.DisplayText == "StubStaticProperty");
+        }
+
+        [Test]
+        public void ShouldContainInstanceMembersOfSparkViewType()
+        {
+            WhenTriggeringAnInitialCompletion();
+            TheCompletionList.ShouldContain(c => c.DisplayText == "OutputScope");
         }
     }
 }
