@@ -19,6 +19,7 @@ namespace SparkSense.Parsing
         private ViewLoader _viewLoader;
         private readonly string _viewPath;
         private Dictionary<string, Type> _referencedTypes;
+        private IEnumerable<Type> _triggerTypes;
 
         public ViewExplorer(IProjectExplorer projectExplorer, string viewPath)
         {
@@ -111,45 +112,16 @@ namespace SparkSense.Parsing
             return macroParams;
         }
 
-        public IList<string> GetInitialTypes()
+        public IEnumerable<Type> GetTriggerTypes()
         {
-            var types = new List<string>();
-
-            _referencedTypes = new Dictionary<string, Type>();
-            _sparkViewMembers = new Dictionary<string, Type>();
+            if (_triggerTypes != null) return _triggerTypes;
             var discovery = _projectExplorer.GetTypeDiscoveryService();
-
-            var allTypes = discovery.GetTypes(typeof(object), true);
-
-            foreach (Type type in allTypes)
+            if (discovery != null)
             {
-                if (!type.IsPublic) continue;
-
-                if (!_referencedTypes.ContainsKey(type.FullName))
-                    _referencedTypes.Add(type.FullName, type);
-
-                if (type.Name.EndsWith("SparkView"))
-                {
-                    var members = type.GetMethods();
-                    foreach (var member in members)
-                    {
-                        if(member.IsPublic && !_sparkViewMembers.ContainsKey(member.Name))
-                        {
-                            _sparkViewMembers.Add(member.Name, member.ReturnType);
-                            types.Add(member.Name);
-                        }
-                    }
-                }
-
+                var typeNavigator = new TypeNavigator(discovery);
+                _triggerTypes = typeNavigator.GetTriggerTypes();
             }
-
-            //var resolver = _projectExplorer.GetTypeResolverService();
-
-            //var view = _referencedTypes["Spark.ISparkView"];
-            //var mem = view.GetMembers();
-
-
-            return types;
+            return _triggerTypes ?? new List<Type>();
         }
 
         public IList<string> GetMembers()

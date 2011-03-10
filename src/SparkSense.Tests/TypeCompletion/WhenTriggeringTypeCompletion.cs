@@ -12,11 +12,12 @@ namespace SparkSense.Tests.TypeCompletion
         }
 
         [Test]
-        public void ShouldIncludeTypesWithStaticMembersInTheCompletionList()
+        public void ShouldIncludeTypesWithPublicMembersInTheCompletionList()
         {
             WhenTriggeringAnInitialCompletion();
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "StubTypeWithNoStatics");
+            TheCompletionList.ShouldNotContain(c => c.DisplayText == "StubPrivateType");
 
+            TheCompletionList.ShouldContain(c => c.DisplayText == "StubTypeWithNoStatics");
             TheCompletionList.ShouldContain(c => c.DisplayText == "StubType");
             TheCompletionList.ShouldContain(c => c.DisplayText == "String");
             TheCompletionList.ShouldContain(c => c.DisplayText == "Int32");

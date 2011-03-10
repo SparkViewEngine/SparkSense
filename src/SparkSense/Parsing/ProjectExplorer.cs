@@ -10,7 +10,7 @@ namespace SparkSense.Parsing
     public class ProjectExplorer : IProjectExplorer
     {
         private CachingViewFolder _projectViewFolder;
-        private ISparkServiceProvider _services;
+        private readonly ISparkServiceProvider _services;
         private IVsHierarchy _hier;
         private ITypeResolutionService _resolver;
         private ITypeDiscoveryService _discovery;
@@ -24,11 +24,14 @@ namespace SparkSense.Parsing
         {
             get
             {
-                if (_projectViewFolder == null)
-                {
-                    string activeDocumentPath;
-                    if (!TryGetActiveDocumentPath(out activeDocumentPath)) return _projectViewFolder;
+                string activeDocumentPath;
+                if (!TryGetActiveDocumentPath(out activeDocumentPath)) return null;
 
+                if (_projectViewFolder == null || _projectViewFolder.BasePath != GetViewRoot(activeDocumentPath))
+                {
+                    _hier = null;
+                    _resolver = null;
+                    _discovery = null;
                     _projectViewFolder = new CachingViewFolder(GetViewRoot(activeDocumentPath) ?? string.Empty);
                     BuildViewMapFromProjectEnvironment();
                 }
@@ -154,7 +157,11 @@ namespace SparkSense.Parsing
         public ITypeDiscoveryService GetTypeDiscoveryService()
         {
             if (_discovery == null)
-                _discovery = SparkServiceProvider.TypeService.GetTypeDiscoveryService(GetHierarchy());
+            {
+                var typeService = _services.TypeService;
+                if(typeService != null)
+                    _discovery = typeService.GetTypeDiscoveryService(GetHierarchy());
+            }
 
             return _discovery;
         }
@@ -162,7 +169,7 @@ namespace SparkSense.Parsing
         public ITypeResolutionService GetTypeResolverService()
         {
             if (_resolver == null)
-                _resolver = SparkServiceProvider.TypeService.GetTypeResolutionService(GetHierarchy());
+                _resolver = _services.TypeService.GetTypeResolutionService(GetHierarchy());
 
             return _resolver;
         }

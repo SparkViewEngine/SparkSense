@@ -2,6 +2,8 @@
 using System.Linq;
 using Microsoft.VisualStudio.Language.Intellisense;
 using System;
+using Spark.Parser.Markup;
+using SparkSense.Parser;
 using SparkSense.Parsing;
 
 namespace SparkSense.StatementCompletion.CompletionSets
@@ -72,17 +74,18 @@ namespace SparkSense.StatementCompletion.CompletionSets
             var members = new List<Completion>();
             if (_viewExplorer == null) return members;
 
+            var builder = new CompletionBuilder();
             switch (ExpressionContext)
             {
                 case ExpressionContexts.New:
-                    _viewExplorer.GetInitialTypes().ToList().ForEach(
-                        member => members.Add(
-                            new Completion(member, member, string.Format("Member: '{0}'", member), GetIcon(Constants.ICON_SparkMacroParameter), null)));
-                    break;
+                    return builder.ToCompletionList(_viewExplorer.GetTriggerTypes(), string.Empty);
                 case ExpressionContexts.Dig:
-                    _viewExplorer.GetMembers().ToList().ForEach(
-                        member => members.Add(
-                            new Completion(member, member, string.Format("Member: '{0}'", member), GetIcon(Constants.ICON_SparkMacroParameter), null)));
+                    var expression = CurrentNode as ExpressionNode;
+                    if (expression != null)
+                    {
+                        string startingPoint = expression.Code.ToString().Trim();
+                        return builder.ToCompletionList(_viewExplorer.GetTriggerTypes(), startingPoint);
+                    }
                     break;
             }
             return members;

@@ -54,6 +54,18 @@ namespace SparkSense.Tests.Scenarios
         {
         }
 
+        protected class StubPrivateType
+        {
+            public string StubInstanceField;
+
+            public string StubInstanceProperty { get; set; }
+
+            public string StubInstanceMethod()
+            {
+                return string.Empty;
+            }
+        }
+
         public class StubTypeWithNoStatics
         {
             public string StubInstanceField;

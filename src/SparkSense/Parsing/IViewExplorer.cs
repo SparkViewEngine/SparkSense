@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace SparkSense.Parsing
@@ -12,7 +13,7 @@ namespace SparkSense.Parsing
         IList<string> GetContentNames();
         IList<string> GetLocalMacros();
         IList<string> GetMacroParameters(string macroName);
-        IList<string> GetInitialTypes();
+        IEnumerable<Type> GetTriggerTypes();
         IList<string> GetMembers();
         void InvalidateView(string newContent);
     }

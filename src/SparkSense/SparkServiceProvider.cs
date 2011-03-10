@@ -1,51 +1,48 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Shell;
+using System.Diagnostics;
 using EnvDTE;
-using SparkSense.Parsing;
 using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Design;
-using Microsoft.VisualStudio.Shell.Interop;
+using SparkSense.Parsing;
 
 namespace SparkSense
 {
     public interface ISparkServiceProvider
     {
-        T GetService<T>();
-        T GetService<T>(Type serviceType);
         IProjectExplorer ProjectExplorer { get; }
         DTE VsEnvironment { get; }
         IVsEditorAdaptersFactoryService AdaptersFactoryService { get; }
+        DynamicTypeService TypeService { get; }
+        T GetService<T>();
+        T GetService<T>(Type serviceType);
     }
 
-    [Export(typeof(ISparkServiceProvider))]
+    [Export(typeof (ISparkServiceProvider))]
     public class SparkServiceProvider : ISparkServiceProvider
     {
-        public static readonly DynamicTypeService TypeService = (DynamicTypeService)Package.GetGlobalService(typeof(DynamicTypeService)); 
-
-        [Import]
-        private IVsEditorAdaptersFactoryService _adaptersFactoryService;
-        [Import(typeof(SVsServiceProvider))]
-        private IServiceProvider _serviceProvider;
+        [Import] private IVsEditorAdaptersFactoryService _adaptersFactoryService;
         private IProjectExplorer _projectExplorer;
+        [Import(typeof (SVsServiceProvider))] private IServiceProvider _serviceProvider;
+        private DynamicTypeService _typeService;
         private DTE _vsEnvironment;
+
+        #region ISparkServiceProvider Members
 
         public T GetService<T>()
         {
-            return (T)_serviceProvider.GetService(typeof(T));
+            return (T) _serviceProvider.GetService(typeof (T));
         }
 
         public T GetService<T>(Type serviceType)
         {
-            return (T)_serviceProvider.GetService(serviceType);
+            return (T) _serviceProvider.GetService(serviceType);
         }
 
         public IVsEditorAdaptersFactoryService AdaptersFactoryService
         {
-            get
-            {
-                return _adaptersFactoryService;
-            }
+            get { return _adaptersFactoryService; }
         }
 
         public IProjectExplorer ProjectExplorer
@@ -68,5 +65,19 @@ namespace SparkSense
             }
         }
 
+        public DynamicTypeService TypeService
+        {
+            get
+            {
+                if (_typeService == null)
+                {
+                    _typeService = GetService<DynamicTypeService>();
+                    Debug.Assert(_typeService != null, "No dynamic type service available.");
+                }
+                return _typeService;
+            }
+        }
+
+        #endregion
     }
 }

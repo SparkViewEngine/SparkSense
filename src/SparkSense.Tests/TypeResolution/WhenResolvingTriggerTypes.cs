@@ -8,16 +8,20 @@ namespace SparkSense.Tests.TypeResolution
     {
         public WhenResolvingTriggerTypes()
         {
-            GivenReferencedTypes(new[] { typeof(StubType), typeof(String), typeof(StubTypeWithNoStatics) });
+            GivenReferencedTypes(new[] { typeof(StubType), typeof(String), typeof(StubTypeWithNoStatics), typeof(StubPrivateType) });
             WhenLookingUpTriggerTypes();
         }
 
         [Test]
-        public void ShouldOnlyResolveTypesThatHaveStaticMembers()
+        public void ShouldOnlyResolveTypesThatArePublic()
         {
             TheResolvedTriggerTypes
-                .ShouldHaveCount(2)
+                .ShouldHaveCount(3)
+                .ShouldNotContain(t => t.Name == "StubPrivateType")
                 .ShouldContain(t => t.Name == "StubType");
+
+            TheResolvedTriggerTypes
+                .ShouldContain(t => t.Name == "StubTypeWithNoStatics");
 
             TheResolvedTriggerTypes
                 .ShouldContain(t => t.Name == "String");

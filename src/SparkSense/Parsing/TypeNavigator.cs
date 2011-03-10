@@ -18,7 +18,7 @@ namespace SparkSense.Parsing
         {
             if (typeDiscoveryService == null) throw new ArgumentNullException("typeDiscoveryService");
             _typeDiscoveryService = typeDiscoveryService;
-            _types = _typeDiscoveryService.GetTypes(typeof (object), true) as IEnumerable<Type>;
+            _types = _typeDiscoveryService.GetTypes(typeof(object), true) as IEnumerable<Type>;
         }
 
         public TypeNavigator(IEnumerable<Type> types)
@@ -55,7 +55,8 @@ namespace SparkSense.Parsing
 
         public IEnumerable<Type> GetTriggerTypes()
         {
-            return Types.Where(t => t.Members(_commonFlags | Flags.StaticAnyVisibility).Count > 0);
+            var types = Types.Where(t => (t.IsPublic || t.IsNestedPublic) && t.Members(_commonFlags | Flags.StaticInstanceAnyVisibility).Count > 0);
+            return types;
         }
     }
 }

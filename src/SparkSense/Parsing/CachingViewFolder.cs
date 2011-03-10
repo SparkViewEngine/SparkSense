@@ -1,3 +1,4 @@
+using System;
 using Spark.FileSystem;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,11 @@ namespace SparkSense.Parsing
         {
             _cache = new InMemoryViewFolder();
             _disk = new FileSystemViewFolder(basePath);
+            BasePath = basePath;
         }
+
+        public string BasePath { get; private set; }
+
         public IViewFile GetViewSource(string path)
         {
             if (!_cache.HasView(path) || _cache[path].Length == 0)
