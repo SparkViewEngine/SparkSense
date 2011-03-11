@@ -62,6 +62,10 @@ namespace SparkSense.Tests.TypeCompletion
         public void ShouldContainInstanceMembersOfSparkViewType()
         {
             WhenTriggeringAnInitialCompletion();
+            TheCompletionList
+                .ShouldNotContain(c => c.DisplayText == "_sparkViewContext")
+                .ShouldContain(c => c.DisplayText == "SparkViewContext");
+
             TheCompletionList.ShouldContain(c => c.DisplayText == "OutputScope");
         }
     }

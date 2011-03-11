@@ -6,17 +6,13 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using SparkSense.Parsing;
 using SparkSense.StatementCompletion.CompletionSets;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace SparkSense.Tests.StatementCompletion
 {
     [TestFixture]
     public class ExpressionCompletionSetTests
     {
-        private IViewExplorer _mockViewExplorer;
-        private ITextSnapshot _stubSnapshot;
-        private ITrackingSpan _stubTrackingSpan;
-        private IViewExplorer _stubViewExplorer;
+        #region Setup/Teardown
 
         [SetUp]
         public void Setup()
@@ -34,6 +30,13 @@ namespace SparkSense.Tests.StatementCompletion
             _mockViewExplorer = null;
         }
 
+        #endregion
+
+        private IViewExplorer _mockViewExplorer;
+        private ITextSnapshot _stubSnapshot;
+        private ITrackingSpan _stubTrackingSpan;
+        private IViewExplorer _stubViewExplorer;
+
         private SnapshotPoint GetSnapShotPoint(string content, int position)
         {
             _stubSnapshot.Stub(x => x.Length).Return(content.Length);
@@ -42,26 +45,28 @@ namespace SparkSense.Tests.StatementCompletion
         }
 
         [Test, Ignore("Not ready for this yet")]
-        public void ShouldHaveAListOfVariables()
+        public void ShouldHaveAListOfTypes()
         {
-            var point = GetSnapShotPoint("${", 2);
-            var completionSet = CompletionSetFactory.GetCompletionSetFor(point, _stubTrackingSpan, _stubViewExplorer);
-            var completions = completionSet.Completions.ToList();
+            SnapshotPoint point = GetSnapShotPoint("${", 2);
+            CompletionSet completionSet = CompletionSetFactory.GetCompletionSetFor(point, _stubTrackingSpan,
+                                                                                   _stubViewExplorer);
+            List<Completion> completions = completionSet.Completions.ToList();
 
-            Assert.That(completionSet, Is.InstanceOfType(typeof(ExpressionCompletionSet)));
+            Assert.That(completionSet, Is.InstanceOf(typeof (ExpressionCompletionSet)));
             Assert.That(completions.Count, Is.EqualTo(7));
             Assert.That(completions.Exists(a => a.DisplayText == "System"));
             Assert.That(completions.Exists(a => a.DisplayText == "Spark"));
         }
 
         [Test, Ignore("Not ready for this yet")]
-        public void ShouldHaveAListOfTypes()
+        public void ShouldHaveAListOfVariables()
         {
-            var point = GetSnapShotPoint("${", 2);
-            var completionSet = CompletionSetFactory.GetCompletionSetFor(point, _stubTrackingSpan, _stubViewExplorer);
-            var completions = completionSet.Completions.ToList();
+            SnapshotPoint point = GetSnapShotPoint("${", 2);
+            CompletionSet completionSet = CompletionSetFactory.GetCompletionSetFor(point, _stubTrackingSpan,
+                                                                                   _stubViewExplorer);
+            List<Completion> completions = completionSet.Completions.ToList();
 
-            Assert.That(completionSet, Is.InstanceOfType(typeof(ExpressionCompletionSet)));
+            Assert.That(completionSet, Is.InstanceOf(typeof (ExpressionCompletionSet)));
             Assert.That(completions.Count, Is.EqualTo(7));
             Assert.That(completions.Exists(a => a.DisplayText == "System"));
             Assert.That(completions.Exists(a => a.DisplayText == "Spark"));

@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using SparkSense.Parsing;
 using SparkSense.StatementCompletion.CompletionSets;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace SparkSense.Tests.StatementCompletion
 {
@@ -47,7 +46,7 @@ namespace SparkSense.Tests.StatementCompletion
             var completionSet = CompletionSetFactory.GetCompletionSetFor(point, _stubTrackingSpan, _stubViewExplorer);
             var completions = completionSet.Completions.ToList();
 
-            Assert.That(completionSet, Is.InstanceOfType(typeof(AttributeCompletionSet)));
+            Assert.That(completionSet, Is.InstanceOf(typeof(AttributeCompletionSet)));
             Assert.That(completions.Count, Is.EqualTo(7));
             Assert.That(completions.Exists(a => a.DisplayText == "content"));
             Assert.That(completions.Exists(a => a.DisplayText == "master"));
@@ -62,7 +61,7 @@ namespace SparkSense.Tests.StatementCompletion
             var completionSet = CompletionSetFactory.GetCompletionSetFor(point, _stubTrackingSpan, _mockViewExplorer);
             var completions = completionSet.Completions.ToList();
 
-            Assert.That(completionSet, Is.InstanceOfType(typeof(AttributeCompletionSet)));
+            Assert.That(completionSet, Is.InstanceOf(typeof(AttributeCompletionSet)));
             Assert.That(completions.Count, Is.EqualTo(4));
             Assert.That(completions.Exists(a => a.DisplayText == "title"));
             Assert.That(completions.Exists(a => a.DisplayText == "footer"));
@@ -78,7 +77,7 @@ namespace SparkSense.Tests.StatementCompletion
             var completionSet = CompletionSetFactory.GetCompletionSetFor(point, _stubTrackingSpan, _mockViewExplorer);
             var completions = completionSet.Completions.ToList();
 
-            Assert.That(completionSet, Is.InstanceOfType(typeof(AttributeCompletionSet)));
+            Assert.That(completionSet, Is.InstanceOf(typeof(AttributeCompletionSet)));
             Assert.That(completions.Count, Is.EqualTo(4));
             Assert.That(completions.Exists(a => a.DisplayText == "x"));
             Assert.That(completions.Exists(a => a.DisplayText == "y"));
@@ -95,7 +94,7 @@ namespace SparkSense.Tests.StatementCompletion
             var completionSet = CompletionSetFactory.GetCompletionSetFor(point, _stubTrackingSpan, _mockViewExplorer);
             var completions = completionSet.Completions.ToList();
 
-            Assert.That(completionSet, Is.InstanceOfType(typeof(AttributeCompletionSet)));
+            Assert.That(completionSet, Is.InstanceOf(typeof(AttributeCompletionSet)));
             Assert.That(completions.Count, Is.EqualTo(2));
             Assert.That(completions.Exists(a => a.DisplayText == "html"));
             Assert.That(completions.Exists(a => a.DisplayText == "master"));

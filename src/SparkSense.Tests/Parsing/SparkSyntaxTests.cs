@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Spark.Parser.Markup;
 using SparkSense.Parsing;
 
@@ -18,7 +17,7 @@ namespace SparkSense.Tests.Parsing
 
             Assert.That(isSparkNode);
             Assert.IsNotNull(sparkNode);
-            Assert.That(sparkNode, Is.InstanceOfType(typeof(SpecialNode)));
+            Assert.That(sparkNode, Is.InstanceOf(typeof(SpecialNode)));
         }
 
         [Test]
@@ -31,7 +30,7 @@ namespace SparkSense.Tests.Parsing
 
             Assert.That(isSparkNode);
             Assert.IsNotNull(sparkNode);
-            Assert.That(sparkNode, Is.InstanceOfType(typeof(SpecialNode)));
+            Assert.That(sparkNode, Is.InstanceOf(typeof(SpecialNode)));
         }
 
         [Test]
@@ -44,7 +43,7 @@ namespace SparkSense.Tests.Parsing
 
             Assert.That(isSparkNode);
             Assert.IsNotNull(sparkNode);
-            Assert.That(sparkNode, Is.InstanceOfType(typeof(SpecialNode)));
+            Assert.That(sparkNode, Is.InstanceOf(typeof(SpecialNode)));
         }
 
         [Test]
@@ -57,7 +56,7 @@ namespace SparkSense.Tests.Parsing
 
             Assert.That(!isSparkNode);
             Assert.IsNotNull(elementNode);
-            Assert.That(elementNode, Is.InstanceOfType(typeof(ElementNode)));
+            Assert.That(elementNode, Is.InstanceOf(typeof(ElementNode)));
         }
 
         [Test]

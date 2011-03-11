@@ -40,12 +40,13 @@ namespace SparkSense.Parsing
 
         public IEnumerable<MemberInfo> GetStaticMembers()
         {
-            return Types.SelectMany(t => t.Members(_commonFlags | Flags.StaticAnyVisibility));
+            return Types.SelectMany(t => t.Members(_commonFlags | Flags.Static));
         }
 
         public IEnumerable<MemberInfo> GetInstanceMembers()
         {
-            return Types.SelectMany(t => t.Members(_commonFlags | Flags.InstanceAnyVisibility));
+            var members = Types.SelectMany(t => t.Members(_commonFlags | Flags.Instance));
+            return members;
         }
 
         public IEnumerable<MethodInfo> GetMethodByName(string methodName)
@@ -55,7 +56,7 @@ namespace SparkSense.Parsing
 
         public IEnumerable<Type> GetTriggerTypes()
         {
-            var types = Types.Where(t => (t.IsPublic || t.IsNestedPublic) && t.Members(_commonFlags | Flags.StaticInstanceAnyVisibility).Count > 0);
+            var types = Types.Where(t => (t.IsPublic || t.IsNestedPublic) && t.Members(_commonFlags | Flags.Static | Flags.Instance).Count > 0);
             return types;
         }
     }

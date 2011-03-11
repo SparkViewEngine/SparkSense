@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Spark.Compiler;
 using SparkSense.Parsing;
 using System;

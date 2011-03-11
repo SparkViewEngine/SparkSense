@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Spark.FileSystem;
 using SparkSense.Parsing;
 using Rhino.Mocks;
@@ -99,8 +98,6 @@ namespace SparkSense.Tests.Parsing
 
             var homeExplorer = new ViewExplorer(_mockProjectExplorer, "Home\\index.spark");
             var homePartials = homeExplorer.GetRelatedPartials();
-
-            _mockProjectExplorer.Expect(x => x.GetViewFolder()).Return(viewFolder);
 
             var otherExplorer = new ViewExplorer(_mockProjectExplorer, "Other\\index.spark");
             var otherPartials = otherExplorer.GetRelatedPartials();

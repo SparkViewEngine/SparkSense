@@ -56,7 +56,7 @@ namespace SparkSense.Tests.StatementCompletion
             Assert.That(elementList.Exists(c => c.DisplayText == "use"));
             Assert.That(elementList.Exists(c => c.DisplayText == "macro"));
             Assert.That(elementList.Exists(c => c.DisplayText == "render"));
-            Assert.That(elementList.Exists(c => c.DisplayText == "section"));
+            Assert.That(elementList.Exists(c => c.DisplayText == "segment"));
             Assert.That(elementList.Exists(c => c.DisplayText == "cache"));
         }
 
