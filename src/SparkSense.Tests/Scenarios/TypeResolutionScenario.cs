@@ -88,6 +88,8 @@ namespace SparkSense.Tests.Scenarios
 
             public string StubInstanceProperty { get; set; }
 
+            public StubType StubTypeInstanceProperty { get; set; }
+
             public static string StubStaticMethod()
             {
                 return string.Empty;

@@ -15,22 +15,25 @@ namespace SparkSense.Tests.TypeCompletion
         public void ShouldBeAbleToDigDownThroughNamespaceLayers()
         {
             WhenTriggeringACompletion("SparkSense.");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "System");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "SparkSense");
-            TheCompletionList.ShouldContain(c => c.DisplayText == "Tests");
+            TheCompletionList
+                .ShouldNotContain(c => c.DisplayText == "System")
+                .ShouldNotContain(c => c.DisplayText == "SparkSense")
+                .ShouldContain(c => c.DisplayText == "Tests");
 
             WhenTriggeringACompletion("SparkSense.Tests.");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "System");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "SparkSense");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "Tests");
-            TheCompletionList.ShouldContain(c => c.DisplayText == "Scenarios");
+            TheCompletionList
+                .ShouldNotContain(c => c.DisplayText == "System")
+                .ShouldNotContain(c => c.DisplayText == "SparkSense")
+                .ShouldNotContain(c => c.DisplayText == "Tests")
+                .ShouldContain(c => c.DisplayText == "Scenarios");
 
             WhenTriggeringACompletion("SparkSense.Tests.Scenarios.");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "System");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "SparkSense");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "Tests");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "Scenarios");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == string.Empty);
+            TheCompletionList
+                .ShouldNotContain(c => c.DisplayText == "System")
+                .ShouldNotContain(c => c.DisplayText == "SparkSense")
+                .ShouldNotContain(c => c.DisplayText == "Tests")
+                .ShouldNotContain(c => c.DisplayText == "Scenarios")
+                .ShouldNotContain(c => c.DisplayText == string.Empty);
         }
 
         [Test]
@@ -51,24 +54,27 @@ namespace SparkSense.Tests.TypeCompletion
         public void ShouldBeAbleToStartFromPartialyThroughNamespaces()
         {
             WhenTriggeringACompletion("Tests.");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "System");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "SparkSense");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "Tests");
-            TheCompletionList.ShouldContain(c => c.DisplayText == "Scenarios");
+            TheCompletionList
+                .ShouldNotContain(c => c.DisplayText == "System")
+                .ShouldNotContain(c => c.DisplayText == "SparkSense")
+                .ShouldNotContain(c => c.DisplayText == "Tests")
+                .ShouldContain(c => c.DisplayText == "Scenarios");
 
             WhenTriggeringACompletion("Tests.Scenarios.");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "System");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "SparkSense");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "Tests");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "Scenarios");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == string.Empty);
+            TheCompletionList
+                .ShouldNotContain(c => c.DisplayText == "System")
+                .ShouldNotContain(c => c.DisplayText == "SparkSense")
+                .ShouldNotContain(c => c.DisplayText == "Tests")
+                .ShouldNotContain(c => c.DisplayText == "Scenarios")
+                .ShouldNotContain(c => c.DisplayText == string.Empty);
 
             WhenTriggeringACompletion("Scenarios.");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "System");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "SparkSense");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "Tests");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "Scenarios");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == string.Empty);
+            TheCompletionList
+                .ShouldNotContain(c => c.DisplayText == "System")
+                .ShouldNotContain(c => c.DisplayText == "SparkSense")
+                .ShouldNotContain(c => c.DisplayText == "Tests")
+                .ShouldNotContain(c => c.DisplayText == "Scenarios")
+                .ShouldNotContain(c => c.DisplayText == string.Empty);
         }
 
         [Test]
@@ -90,9 +96,10 @@ namespace SparkSense.Tests.TypeCompletion
         public void ShouldNotIncludeTypesThemselvesInTheCompletionList()
         {
             WhenTriggeringACompletion("SparkSense.");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "StubType");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "String");
-            TheCompletionList.ShouldNotContain(c => c.DisplayText == "Int32");
+            TheCompletionList
+                .ShouldNotContain(c => c.DisplayText == "StubType")
+                .ShouldNotContain(c => c.DisplayText == "String")
+                .ShouldNotContain(c => c.DisplayText == "Int32");
         }
     }
 }

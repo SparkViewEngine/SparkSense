@@ -124,6 +124,7 @@
     <Compile Include="Scenarios\SyntaxCompilationScenario.cs" />
     <Compile Include="Scenarios\TypeResolutionScenario.cs" />
     <Compile Include="Scenarios\TypeCompletionScenario.cs" />
+    <Compile Include="TypeCompletion\WhenNavigatingThroughMembers.cs" />
     <Compile Include="TypeCompletion\WhenTriggeringTypeCompletion.cs" />
     <Compile Include="TypeCompletion\WhenNavigatingThroughNameSpaces.cs" />
     <Compile Include="TypeResolution\WhenResolvingTriggerTypes.cs" />

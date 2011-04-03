@@ -30,7 +30,7 @@ namespace SparkSense.Parsing
 
         private TypeNavigator()
         {
-            _commonFlags = Flags.Public | Flags.ExcludeBackingMembers | Flags.TrimExplicitlyImplemented;
+            _commonFlags = Flags.Public | Flags.ExcludeBackingMembers | Flags.TrimExplicitlyImplemented | Flags.PartialNameMatch;
         }
 
         public IEnumerable<Type> Types
@@ -51,13 +51,24 @@ namespace SparkSense.Parsing
 
         public IEnumerable<MethodInfo> GetMethodByName(string methodName)
         {
-            return Types.SelectMany(t => t.Methods(_commonFlags | Flags.StaticInstanceAnyVisibility, new[] {methodName}));
+            return Types.SelectMany(t => t.Methods(_commonFlags | Flags.Static | Flags.Instance, new[] { methodName }));
+        }
+
+        public IEnumerable<PropertyInfo> GetPropertyByName(string propertyName)
+        {
+            return Types.SelectMany(t => t.Properties(_commonFlags | Flags.Static | Flags.Instance, new[] { propertyName }));            
         }
 
         public IEnumerable<Type> GetTriggerTypes()
         {
             var types = Types.Where(t => (t.IsPublic || t.IsNestedPublic) && t.Members(_commonFlags | Flags.Static | Flags.Instance).Count > 0);
             return types;
+        }
+
+        public IEnumerable<MemberInfo> GetMembers(PropertyInfo property)
+        {
+            var members = property.Type().Members(_commonFlags | Flags.Static | Flags.Instance);
+            return members;
         }
     }
 }

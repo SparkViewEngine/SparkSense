@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using Fasterflect;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Spark;
 using SparkSense.Parsing;
@@ -15,11 +17,14 @@ namespace SparkSense.Parser
             if (string.IsNullOrEmpty(startingPoint)) return ToCompletionList(types);
 
             IEnumerable<Completion> namespaceCompletions = GetNamespaceCompletions(types, startingPoint);
-            IEnumerable<Completion> memberCompletions = GetStaticMemberCompletions(types, startingPoint);
+            IEnumerable<Completion> typeStaticMemberCompletions = GetTypeStaticMemberCompletions(types, startingPoint);
+            IEnumerable<Completion> objectMemberCompletions = GetObjectMemberCompletions(types, startingPoint);
 
-            return namespaceCompletions.Union(memberCompletions).Distinct();
+            return namespaceCompletions
+                .Union(typeStaticMemberCompletions)
+                .Union(objectMemberCompletions)
+                .Distinct();
         }
-
 
         private static IEnumerable<Completion> ToCompletionList(IEnumerable<Type> types)
         {
@@ -30,16 +35,33 @@ namespace SparkSense.Parser
             return typeCompletions.Union(namespaceCompletions).Union(viewMemberCompletions).Distinct();
         }
 
-        private static IEnumerable<Completion> GetStaticMemberCompletions(IEnumerable<Type> types, string startingPoint)
+        private static IEnumerable<Completion> GetObjectMemberCompletions(IEnumerable<Type> types, string startingPoint)
+        {
+            var parentMemberName = startingPoint.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries).Last();
+            var typeNavigator = new TypeNavigator(types);
+            var property = typeNavigator.GetPropertyByName(parentMemberName).FirstOrDefault();
+            if (property == null)
+            {
+                return new List<Completion>();
+            }
+            IEnumerable<MemberInfo> members = typeNavigator.GetMembers(property);
+            IEnumerable<Completion> memberCompletions = members.Select(m => new Completion(m.Name));
+            return memberCompletions;
+        }
+
+        private static IEnumerable<Completion> GetTypeStaticMemberCompletions(IEnumerable<Type> types, string startingPoint)
         {
             var typeNavigator = new TypeNavigator(types.Where(t => startingPoint.TrimEnd('.').EndsWith(t.Name)));
-            return typeNavigator.GetStaticMembers().Distinct()
+            
+            IEnumerable<MemberInfo> staticMembersFromAllTypes = typeNavigator.GetStaticMembers();
+
+            return staticMembersFromAllTypes.Distinct()
                 .Select(m => new Completion(m.Name));
         }
 
         private static IEnumerable<Completion> GetViewInstanceMemberCompletions(IEnumerable<Type> types)
         {
-            var viewTypeNavigator = new TypeNavigator(types.Where(t => typeof(ISparkView).IsAssignableFrom(t)));
+            var viewTypeNavigator = new TypeNavigator(types.Where(t => typeof(SparkViewBase).IsAssignableFrom(t)));
             return viewTypeNavigator.GetInstanceMembers().Distinct()
                 .Select(m => new Completion(m.Name));
         }
