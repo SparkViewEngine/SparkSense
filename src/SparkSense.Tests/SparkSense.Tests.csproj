@@ -127,6 +127,7 @@
     <Compile Include="TypeCompletion\WhenNavigatingThroughMembers.cs" />
     <Compile Include="TypeCompletion\WhenTriggeringTypeCompletion.cs" />
     <Compile Include="TypeCompletion\WhenNavigatingThroughNameSpaces.cs" />
+    <Compile Include="TypeResolution\WhenResolvingTypes.cs" />
     <Compile Include="TypeResolution\WhenResolvingTriggerTypes.cs" />
     <Compile Include="TypeResolution\WhenResolvingMethods.cs" />
     <Compile Include="TypeResolution\WhenResolvingInstanceMembers.cs" />

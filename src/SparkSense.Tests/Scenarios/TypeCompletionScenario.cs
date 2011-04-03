@@ -13,11 +13,11 @@ namespace SparkSense.Tests.Scenarios
             WhenTriggeringACompletion(string.Empty);
         }
 
-        protected void WhenTriggeringACompletion(string startingPoint)
+        protected void WhenTriggeringACompletion(string codeSnippit)
         {
-            var completionBuilder = new CompletionBuilder();
+            var completionBuilder = new CompletionBuilder(TheTypeNavigator);
             WhenLookingUpTriggerTypes();
-            TheCompletionList = completionBuilder.ToCompletionList(TheResolvedTriggerTypes, startingPoint);            
+            TheCompletionList = completionBuilder.ToCompletionList(codeSnippit);            
         }
     }
 }

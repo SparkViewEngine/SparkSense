@@ -18,11 +18,20 @@ namespace SparkSense.Tests.Scenarios
             _typeDiscoveryService = MockRepository.GenerateMock<ITypeDiscoveryService>();
         }
 
+        protected Type TheResolvedType { get; private set; }
+
         protected IEnumerable<Type> TheResolvedTriggerTypes { get; private set; }
 
         protected IEnumerable<MemberInfo> TheResolvedMembers { get; private set; }
 
         protected IEnumerable<MethodInfo> TheResolvedMethods { get; private set; }
+
+        protected string TheRemainingCode { get; private set; }
+
+        public TypeNavigator TheTypeNavigator
+        {
+            get { return _typeNavigator; }
+        }
 
         protected void GivenReferencedTypes(ICollection types)
         {
@@ -32,26 +41,31 @@ namespace SparkSense.Tests.Scenarios
 
         protected void WhenLookingUpTriggerTypes()
         {
-            TheResolvedTriggerTypes = _typeNavigator.GetTriggerTypes();
+            TheResolvedTriggerTypes = TheTypeNavigator.GetTriggerTypes();
         }
 
         protected void WhenLookingUpStaticMembers()
         {
-            TheResolvedMembers = _typeNavigator.GetStaticMembers();
+            TheResolvedMembers = TheTypeNavigator.GetStaticMembers();
         }
 
         protected void WhenLookingUpInstanceMembers()
         {
-            TheResolvedMembers = _typeNavigator.GetInstanceMembers();
+            TheResolvedMembers = TheTypeNavigator.GetInstanceMembers();
         }
 
         protected void WhenLookingUpMethods(string methodName)
         {
-            TheResolvedMethods = _typeNavigator.GetMethodByName(methodName);
+            TheResolvedMethods = TheTypeNavigator.GetMethodByName(methodName);
         }
 
         protected void WhenLookingUpSomeCode(string codeSnippit)
         {
+            Type resolvedType;
+            string remainingCode;
+            if (_typeNavigator.TryResolveType(codeSnippit, out resolvedType, out remainingCode))
+                TheResolvedType = resolvedType;
+            TheRemainingCode = remainingCode;
         }
 
         protected class StubPrivateType

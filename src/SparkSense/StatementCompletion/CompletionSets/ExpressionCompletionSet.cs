@@ -83,8 +83,8 @@ namespace SparkSense.StatementCompletion.CompletionSets
                     var expression = CurrentNode as ExpressionNode;
                     if (expression != null)
                     {
-                        string startingPoint = expression.Code.ToString().Trim();
-                        return builder.ToCompletionList(_viewExplorer.GetTriggerTypes(), startingPoint);
+                        string codeSnippit = expression.Code.ToString().Trim();
+                        return builder.ToCompletionList(_viewExplorer.GetTriggerTypes(), codeSnippit);
                     }
                     break;
             }
