@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Parser\CompletionBuilder.cs" />
+    <Compile Include="Parser\CompletionBuilderExtensions.cs" />
     <Compile Include="Parser\CompletionGrammar.cs" />
     <Compile Include="Parser\CompletionSyntaxProvider.cs" />
     <Compile Include="Parsing\CachingViewFolder.cs" />

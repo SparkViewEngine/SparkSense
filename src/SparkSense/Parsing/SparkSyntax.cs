@@ -65,6 +65,8 @@ namespace SparkSense.Parsing
                 return typeof(ElementNode);
             if (IsPositionInAttribute(content, position))
                 return typeof(AttributeNode);
+            if (IsExpression(content, position))
+                return typeof(ExpressionNode);
 
             return typeof(TextNode);
         }

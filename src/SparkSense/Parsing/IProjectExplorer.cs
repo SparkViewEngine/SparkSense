@@ -1,6 +1,7 @@
+using System;
+using System.Collections.Generic;
 using Spark.FileSystem;
 using Microsoft.VisualStudio.Text;
-using System.ComponentModel.Design;
 
 namespace SparkSense.Parsing
 {
@@ -11,7 +12,6 @@ namespace SparkSense.Parsing
         IViewExplorer GetViewExplorer(ITextBuffer textBuffer);
         string GetCurrentViewPath(ITextBuffer textBuffer);
         void SetViewContent(string viewPath, string content);
-        ITypeDiscoveryService GetTypeDiscoveryService();
-        ITypeResolutionService GetTypeResolverService();
+        IEnumerable<Type> GetProjectReferencedTypes();
     }
 }

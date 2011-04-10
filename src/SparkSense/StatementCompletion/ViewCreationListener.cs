@@ -23,6 +23,9 @@ namespace SparkSense.StatementCompletion
         public ICompletionBroker CompletionBroker;
 
         [Import]
+        public ISparkServiceProvider ServiceProvider { get; set; }
+
+        [Import]
         public ITextStructureNavigatorSelectorService TextNavigator { get; set; }
 
         public IVsTextView TextViewAdapter { get; private set; }
@@ -35,11 +38,24 @@ namespace SparkSense.StatementCompletion
             TextViewAdapter = textViewAdapter;
             if (!TryGetTextView()) return;
 
+            InitTypes();
+
             Func<KeyPressInterceptor> interceptionCreator = () => new KeyPressInterceptor(this);
 
             TextView.Properties.GetOrCreateSingletonProperty(interceptionCreator);
         }
-        
+
+        private void InitTypes()
+        {
+            if (ServiceProvider != null)
+            {
+                if (ServiceProvider.ProjectExplorer != null)
+                {
+                    var types = ServiceProvider.ProjectExplorer.GetProjectReferencedTypes();
+                }
+            }
+        }
+
         private bool TryGetTextView()
         {
             if (AdaptersFactoryService == null) return false;

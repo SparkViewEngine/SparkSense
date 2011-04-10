@@ -17,6 +17,7 @@ namespace SparkSense.StatementCompletion
         private ITextStructureNavigator _textNavigator;
         private ITrackingSpan _trackingSpan;
         private bool _scanForNewSession;
+        private Type _currentContext;
 
         public CompletionSessionManager(ICompletionBroker broker, IWpfTextView textView, ITextStructureNavigator textNavigator)
         {
@@ -75,8 +76,8 @@ namespace SparkSense.StatementCompletion
             // this particular key press - it'll try again next time. The Beta will drive out most syntax issues.
             try
             {
-                var currentContext = SparkSyntax.ParseContext(_textView.TextBuffer.CurrentSnapshot.GetText(), caretPosition);
-                return currentContext != null && currentContext != typeof(TextNode);
+                _currentContext = SparkSyntax.ParseContext(_textView.TextBuffer.CurrentSnapshot.GetText(), caretPosition);
+                return _currentContext != null && _currentContext != typeof(TextNode);
             }
             catch
             {
@@ -127,10 +128,21 @@ namespace SparkSense.StatementCompletion
             if (!caret.HasValue) return false;
 
             var trackingPoint = caret.Value.Snapshot.CreateTrackingPoint(caret.Value.Position, PointTrackingMode.Positive);
-            _trackingSpan = caret.Value.Snapshot.CreateTrackingSpan(caret.Value.Position, 0, SpanTrackingMode.EdgeInclusive);
+
+            GetTrackingSpan(caret.Value.Snapshot, caret.Value.Position);
 
             _sparkOnlySession = _completionBroker.CreateCompletionSession(_textView, trackingPoint, true);
             return _sparkOnlySession != null;
+        }
+
+        private void GetTrackingSpan(ITextSnapshot snapshot, int triggerPoint)
+        {
+            ITextSnapshotLine line = snapshot.GetLineFromPosition(triggerPoint);
+            string lineString = line.GetText();
+            var stopChars = new char[] {' ', '\t', '{', '.'};
+            int start = lineString.Substring(0, triggerPoint - line.Start.Position).LastIndexOfAny(stopChars) + line.Start.Position + 1;
+            int length = lineString.Substring(triggerPoint - line.Start.Position).IndexOfAny(stopChars) + triggerPoint - start + 1;
+            _trackingSpan = snapshot.CreateTrackingSpan(start, length, SpanTrackingMode.EdgeInclusive);
         }
 
         public void AddCompletionSourceProperties(Dictionary<object, object> properties)

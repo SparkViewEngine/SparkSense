@@ -10,14 +10,6 @@ namespace SparkSense.Tests.Scenarios
 {
     public class TypeResolutionScenario : Scenario
     {
-        private readonly ITypeDiscoveryService _typeDiscoveryService;
-        private TypeNavigator _typeNavigator;
-
-        public TypeResolutionScenario()
-        {
-            _typeDiscoveryService = MockRepository.GenerateMock<ITypeDiscoveryService>();
-        }
-
         protected Type TheResolvedType { get; private set; }
 
         protected IEnumerable<Type> TheResolvedTriggerTypes { get; private set; }
@@ -28,15 +20,11 @@ namespace SparkSense.Tests.Scenarios
 
         protected string TheRemainingCode { get; private set; }
 
-        public TypeNavigator TheTypeNavigator
-        {
-            get { return _typeNavigator; }
-        }
+        public TypeNavigator TheTypeNavigator { get; private set; }
 
-        protected void GivenReferencedTypes(ICollection types)
+        protected void GivenReferencedTypes(IEnumerable<Type> types)
         {
-            _typeNavigator = new TypeNavigator(_typeDiscoveryService);
-            _typeDiscoveryService.Stub(x => x.GetTypes(typeof (object), true)).Return(types);
+            TheTypeNavigator = new TypeNavigator(types);
         }
 
         protected void WhenLookingUpTriggerTypes()
@@ -63,7 +51,7 @@ namespace SparkSense.Tests.Scenarios
         {
             Type resolvedType;
             string remainingCode;
-            if (_typeNavigator.TryResolveType(codeSnippit, out resolvedType, out remainingCode))
+            if (TheTypeNavigator.TryResolveType(codeSnippit, out resolvedType, out remainingCode))
                 TheResolvedType = resolvedType;
             TheRemainingCode = remainingCode;
         }

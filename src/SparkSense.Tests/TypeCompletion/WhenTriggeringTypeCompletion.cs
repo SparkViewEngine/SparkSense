@@ -9,7 +9,7 @@ namespace SparkSense.Tests.TypeCompletion
     {
         public WhenTriggeringTypeCompletion()
         {
-            GivenReferencedTypes(new[] {typeof (StubType), typeof(StubTypeWithNoStatics), typeof (String), typeof (Int32), typeof(SparkViewBase)});
+            GivenReferencedTypes(new[] {typeof (StubType), typeof(StubTypeWithNoStatics), typeof (String), typeof (Int32), typeof(SparkViewBase), typeof(AbstractSparkView)});
         }
 
         [Test]

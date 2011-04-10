@@ -72,21 +72,12 @@ namespace SparkSense.StatementCompletion.CompletionSets
         private IEnumerable<Completion> GetMembers()
         {
             var members = new List<Completion>();
-            if (_viewExplorer == null) return members;
-
-            var builder = new CompletionBuilder();
-            switch (ExpressionContext)
+            if (_completionBuilder == null) return members;
+            var expression = CurrentNode as ExpressionNode;
+            if (expression != null)
             {
-                case ExpressionContexts.New:
-                    return builder.ToCompletionList(_viewExplorer.GetTriggerTypes(), string.Empty);
-                case ExpressionContexts.Dig:
-                    var expression = CurrentNode as ExpressionNode;
-                    if (expression != null)
-                    {
-                        string codeSnippit = expression.Code.ToString().Trim();
-                        return builder.ToCompletionList(_viewExplorer.GetTriggerTypes(), codeSnippit);
-                    }
-                    break;
+                string codeSnippit = expression.Code.ToString().Trim();
+                return _completionBuilder.ToCompletionList(codeSnippit);
             }
             return members;
         }

@@ -2,6 +2,7 @@
 using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
+using SparkSense.Parser;
 using SparkSense.Parsing;
 using Spark.Parser.Markup;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace SparkSense.StatementCompletion.CompletionSets
     {
         protected static SnapshotPoint _triggerPoint;
         protected static IViewExplorer _viewExplorer;
+        protected static CompletionBuilder _completionBuilder;
 
         internal CompletionSetFactory() : base("Spark", "Spark", null, null, null) { }
 
@@ -49,6 +51,7 @@ namespace SparkSense.StatementCompletion.CompletionSets
         {
             _triggerPoint = triggerPoint;
             _viewExplorer = viewExplorer;
+            _completionBuilder = new CompletionBuilder(_viewExplorer.GetTypeNavigator());
             return new T { ApplicableTo = trackingSpan };
         }
 

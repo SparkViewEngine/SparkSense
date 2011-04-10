@@ -15,11 +15,9 @@ namespace SparkSense.Parsing
     public class ViewExplorer : IViewExplorer
     {
         private IProjectExplorer _projectExplorer;
-        private Dictionary<string, Type> _sparkViewMembers;
         private ViewLoader _viewLoader;
         private readonly string _viewPath;
-        private Dictionary<string, Type> _referencedTypes;
-        private IEnumerable<Type> _triggerTypes;
+        private TypeNavigator _typeNavigator;
 
         public ViewExplorer(IProjectExplorer projectExplorer, string viewPath)
         {
@@ -112,16 +110,10 @@ namespace SparkSense.Parsing
             return macroParams;
         }
 
-        public IEnumerable<Type> GetTriggerTypes()
+        public TypeNavigator GetTypeNavigator()
         {
-            if (_triggerTypes != null) return _triggerTypes;
-            var discovery = _projectExplorer.GetTypeDiscoveryService();
-            if (discovery != null)
-            {
-                var typeNavigator = new TypeNavigator(discovery);
-                _triggerTypes = typeNavigator.GetTriggerTypes();
-            }
-            return _triggerTypes ?? new List<Type>();
+            if (_typeNavigator != null) return _typeNavigator;
+            return _typeNavigator = new TypeNavigator(_projectExplorer.GetProjectReferencedTypes());
         }
 
         public IList<string> GetMembers()

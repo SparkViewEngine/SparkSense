@@ -14,14 +14,6 @@ namespace SparkSense.Parsing
         private readonly ITypeDiscoveryService _typeDiscoveryService;
         private IEnumerable<Type> _types;
 
-        public TypeNavigator(ITypeDiscoveryService typeDiscoveryService)
-            : this()
-        {
-            if (typeDiscoveryService == null) throw new ArgumentNullException("typeDiscoveryService");
-            _typeDiscoveryService = typeDiscoveryService;
-            _types = _typeDiscoveryService.GetTypes(typeof(object), true) as IEnumerable<Type>;
-        }
-
         public TypeNavigator(IEnumerable<Type> types)
             : this()
         {
@@ -31,7 +23,7 @@ namespace SparkSense.Parsing
 
         private TypeNavigator()
         {
-            _commonFlags = Flags.Public | Flags.ExcludeBackingMembers | Flags.TrimExplicitlyImplemented | Flags.PartialNameMatch;
+            _commonFlags = Flags.Public | Flags.ExcludeBackingMembers | Flags.TrimExplicitlyImplemented;// | Flags.PartialNameMatch;
         }
 
         public IEnumerable<Type> Types
@@ -44,10 +36,27 @@ namespace SparkSense.Parsing
             return Types.SelectMany(t => t.Members(_commonFlags | Flags.Static));
         }
 
+        public IEnumerable<MemberInfo> GetViewInstanceMembers(IEnumerable<Type> types)
+        {
+            return GetInstanceMembers(types.Where(t => typeof (SparkViewBase).IsAssignableFrom(t)));
+        }
+
+        public IEnumerable<MemberInfo> GetInstanceMembers(IEnumerable<Type> types)
+        {
+            var members = types.SelectMany(t => t.Members(_commonFlags | Flags.Instance));
+            return members;
+        }
+
         public IEnumerable<MemberInfo> GetInstanceMembers()
         {
-            var members = Types.SelectMany(t => t.Members(_commonFlags | Flags.Instance));
-            return members;
+            return GetInstanceMembers(Types);
+        }
+
+        public MemberInfo GetMemberByName(Type type, string memberName, Flags flags)
+        {
+            if (memberName == null) return null;
+            var member = type.Member(memberName, _commonFlags | flags);
+            return member;
         }
 
         public IEnumerable<MethodInfo> GetMethodByName(string methodName)
@@ -66,10 +75,28 @@ namespace SparkSense.Parsing
             return types;
         }
 
-        public IEnumerable<MemberInfo> GetMembers(PropertyInfo property)
+        public IEnumerable<MemberInfo> GetMembers(Type type, Flags flags)
         {
-            var members = property.Type().Members(_commonFlags | Flags.Static | Flags.Instance);
+            var members = type.Members(_commonFlags | flags);
             return members;
+        }
+
+        public IEnumerable<MethodInfo> GetMethods(Type type)
+        {
+            var methods = type.Methods(_commonFlags | Flags.Static | Flags.Instance);
+            return methods;
+        }
+
+        public IEnumerable<PropertyInfo> GetProperties(Type type)
+        {
+            var properties = type.Properties(_commonFlags | Flags.Static | Flags.Instance);
+            return properties;
+        }
+
+        public IEnumerable<FieldInfo> GetFields(Type type)
+        {
+            var fields = type.Fields(_commonFlags | Flags.Static | Flags.Instance);
+            return fields;
         }
 
         public bool TryResolveType(string codeSnippit, out Type resolvedType, out string remainingCode)
@@ -91,10 +118,36 @@ namespace SparkSense.Parsing
             return resolvedType != null;
         }
 
+        public MemberInfo GetResolvedMember(Type resolvedType, string fragment, Flags flags)
+        {
+            if (String.IsNullOrEmpty(fragment)) return null;
+            MemberInfo member = GetMemberByName(resolvedType, fragment, flags);
+            return member == null || member.Name.Length != fragment.Length 
+                ? null 
+                : member;
+        }
+
+        public Type GetResolvedType(MemberInfo resolvedMember)
+        {
+            if (resolvedMember == null) return null;
+
+            return resolvedMember.IsInvokable()
+                       ? resolvedMember.DeclaringType.Methods(resolvedMember.Name).First().ReturnType
+                       : resolvedMember.Type();
+        }
+
+        public string GetMatchingNamespaceElements(Type type, string codeSnippit)
+        {
+            string fullName = !String.IsNullOrEmpty(type.FullName) ? type.FullName.Replace('+', '.') : String.Empty;
+            return fullName.Contains(codeSnippit)
+                       ? fullName.Remove(0, fullName.IndexOf(codeSnippit) + codeSnippit.Length).Split('.').First()
+                       : String.Empty;
+        }
+
         private string GetRemainingCode(IEnumerable<string> fragments, Type resolvedType)
         {
             string typeName = resolvedType.Name;
-            string remainingCode = string.Join(".", fragments.TakeWhile(s => s != typeName && s != "this").Reverse());
+            string remainingCode = String.Join(".", fragments.TakeWhile(s => s != typeName && s != "this").Reverse());
             return remainingCode;
         }
 
@@ -104,7 +157,7 @@ namespace SparkSense.Parsing
             if (fragment == "this")
             {
                 IEnumerable<Type> resolvedTypes = Types.Where(t => typeof (SparkViewBase).IsAssignableFrom(t));
-                //BUG: This will potentially return the wrong Type if there are more than one inheritor of SparkViewBase
+                //BUG: This will potentially return the wrong Type if there is more than one inheritor of SparkViewBase
                 resolvedType = resolvedTypes.FirstOrDefault(t => t.Name != typeof(SparkViewBase).Name);
             }
             return resolvedType;
@@ -112,17 +165,8 @@ namespace SparkSense.Parsing
 
         private Type GetResolvedTypeByName(string fragment)
         {
-            Type resolvedType = null;
-            IEnumerable<Type> resolvedTypes = Types.Where(t => t.Name.Contains(fragment));
-            if (resolvedTypes.Count() == 1)
-            {
-                resolvedType = resolvedTypes.First();
-            }
-            if (resolvedTypes.Count(t => t.Name == fragment) == 1)
-            {
-                resolvedType = resolvedTypes.First(t => t.Name == fragment);
-            }
-            return resolvedType;
+            IEnumerable<Type> resolvedTypes = Types.Where(t => t.Name.Equals(fragment));
+            return resolvedTypes.FirstOrDefault();
         }
     }
 }

@@ -1,25 +1,35 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.Design;
 using EnvDTE;
-using Spark.FileSystem;
+using Microsoft.VisualStudio.Shell.Design;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
-using System.ComponentModel.Design;
+using Spark.FileSystem;
 
 namespace SparkSense.Parsing
 {
     public class ProjectExplorer : IProjectExplorer
     {
-        private CachingViewFolder _projectViewFolder;
         private readonly ISparkServiceProvider _services;
-        private IVsHierarchy _hier;
-        private ITypeResolutionService _resolver;
         private ITypeDiscoveryService _discovery;
+        private IVsHierarchy _hier;
+        private IEnumerable<Type> _projectReferencedTypes;
+        private CachingViewFolder _projectViewFolder;
 
         public ProjectExplorer(ISparkServiceProvider services)
         {
             if (services == null) throw new ArgumentNullException("services", "services is null.");
             _services = services;
+            InitTypes();
         }
+
+        private void InitTypes()
+        {
+            InitTypeDiscoveryService();
+            GetProjectReferencedTypes();
+        }
+
         private CachingViewFolder ProjectViewFolder
         {
             get
@@ -30,14 +40,17 @@ namespace SparkSense.Parsing
                 if (_projectViewFolder == null || _projectViewFolder.BasePath != GetViewRoot(activeDocumentPath))
                 {
                     _hier = null;
-                    _resolver = null;
                     _discovery = null;
+                    _projectReferencedTypes = null;
                     _projectViewFolder = new CachingViewFolder(GetViewRoot(activeDocumentPath) ?? string.Empty);
+                    InitTypes();
                     BuildViewMapFromProjectEnvironment();
                 }
                 return _projectViewFolder;
             }
         }
+
+        #region IProjectExplorer Members
 
         public bool ViewFolderExists()
         {
@@ -59,11 +72,11 @@ namespace SparkSense.Parsing
         public IViewExplorer GetViewExplorer(ITextBuffer textBuffer)
         {
             IViewExplorer viewExplorer;
-            if (textBuffer.Properties.TryGetProperty(typeof(ViewExplorer), out viewExplorer)) 
+            if (textBuffer.Properties.TryGetProperty(typeof (ViewExplorer), out viewExplorer))
                 return viewExplorer;
 
             viewExplorer = new ViewExplorer(this, GetCurrentViewPath(textBuffer));
-            textBuffer.Properties.AddProperty(typeof(ViewExplorer), viewExplorer);
+            textBuffer.Properties.AddProperty(typeof (ViewExplorer), viewExplorer);
             return viewExplorer;
         }
 
@@ -78,6 +91,31 @@ namespace SparkSense.Parsing
             return filename.Replace(GetViewRoot(filename), string.Empty).TrimStart('\\');
         }
 
+        public void SetViewContent(string viewPath, string content)
+        {
+            ProjectViewFolder.SetViewSource(viewPath, content);
+        }
+
+        public IEnumerable<Type> GetProjectReferencedTypes()
+        {
+            if (_projectReferencedTypes != null) return _projectReferencedTypes;
+            try
+            {
+                _projectReferencedTypes = _discovery.GetTypes(typeof (object), true) as IEnumerable<Type>;
+            }
+            catch (NullReferenceException)
+            {
+                //Type Discovery service isn't ready yet.
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return _projectReferencedTypes;
+        }
+
+        #endregion
+
         public string GetCurrentViewPath()
         {
             string activeDocumentPath;
@@ -90,22 +128,18 @@ namespace SparkSense.Parsing
             return ProjectViewFolder.HasView(viewPath);
         }
 
-        public void SetViewContent(string viewPath, string content)
-        {
-            ProjectViewFolder.SetViewSource(viewPath, content);
-        }
-
         private bool TryGetActiveDocumentPath(out string activeDocumentPath)
         {
             activeDocumentPath = _services.VsEnvironment.ActiveDocument != null
-                ? _services.VsEnvironment.ActiveDocument.FullName
-                : string.Empty;
+                                     ? _services.VsEnvironment.ActiveDocument.FullName
+                                     : string.Empty;
             return !String.IsNullOrEmpty(activeDocumentPath);
         }
 
         private void BuildViewMapFromProjectEnvironment()
         {
-            var currentProject = _services.VsEnvironment.ActiveDocument.ProjectItem.ContainingProject;
+            if (_services.VsEnvironment.ActiveDocument == null) return;
+            Project currentProject = _services.VsEnvironment.ActiveDocument.ProjectItem.ContainingProject;
             foreach (ProjectItem projectItem in currentProject.ProjectItems)
                 ScanProjectItemForViews(projectItem);
         }
@@ -131,8 +165,8 @@ namespace SparkSense.Parsing
             string fullPath = projectItem.Properties.Item("FullPath").Value.ToString();
 
             int viewsLocationStart = fullPath.LastIndexOf("Views");
-            var viewRoot = fullPath.Substring(0, viewsLocationStart + 5);
-            var foundView = fullPath.Replace(viewRoot, string.Empty).TrimStart('\\');
+            string viewRoot = fullPath.Substring(0, viewsLocationStart + 5);
+            string foundView = fullPath.Replace(viewRoot, string.Empty).TrimStart('\\');
 
             return foundView;
         }
@@ -148,30 +182,21 @@ namespace SparkSense.Parsing
             if (_hier == null)
             {
                 var sln = _services.GetService<IVsSolution>();
-                string projectName = _services.VsEnvironment.ActiveDocument.ProjectItem.ContainingProject.UniqueName;
-                sln.GetProjectOfUniqueName(projectName, out _hier);
+                if (_services.VsEnvironment.ActiveDocument != null)
+                {
+                    string projectName = _services.VsEnvironment.ActiveDocument.ProjectItem.ContainingProject.UniqueName;
+                    sln.GetProjectOfUniqueName(projectName, out _hier);
+                }
             }
             return _hier;
         }
 
-        public ITypeDiscoveryService GetTypeDiscoveryService()
+        private void InitTypeDiscoveryService()
         {
-            if (_discovery == null)
-            {
-                var typeService = _services.TypeService;
-                if(typeService != null)
-                    _discovery = typeService.GetTypeDiscoveryService(GetHierarchy());
-            }
-
-            return _discovery;
-        }
-
-        public ITypeResolutionService GetTypeResolverService()
-        {
-            if (_resolver == null)
-                _resolver = _services.TypeService.GetTypeResolutionService(GetHierarchy());
-
-            return _resolver;
+            if (_discovery != null) return;
+            DynamicTypeService typeService = _services.TypeService;
+            if (typeService != null)
+                _discovery = typeService.GetTypeDiscoveryService(GetHierarchy());
         }
     }
 }

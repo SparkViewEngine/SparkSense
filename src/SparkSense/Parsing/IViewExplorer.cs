@@ -13,8 +13,8 @@ namespace SparkSense.Parsing
         IList<string> GetContentNames();
         IList<string> GetLocalMacros();
         IList<string> GetMacroParameters(string macroName);
-        IEnumerable<Type> GetTriggerTypes();
         IList<string> GetMembers();
         void InvalidateView(string newContent);
+        TypeNavigator GetTypeNavigator();
     }
 }
