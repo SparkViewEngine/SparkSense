@@ -48,7 +48,7 @@ namespace SparkSense.StatementCompletion
             if (_sparkOnlySession.SelectedCompletionSet.SelectionStatus.IsSelected)
             {
                 _sparkOnlySession.Commit();
-                return true;
+                return key.IsACommitCharacterWithNoOutput(inputCharacter);
             }
             _sparkOnlySession.Dismiss();
             return false;

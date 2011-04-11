@@ -23,6 +23,11 @@ namespace SparkSense.StatementCompletion
             return key == (uint)VSConstants.VSStd2KCmdID.RETURN || key == (uint)VSConstants.VSStd2KCmdID.TAB || char.IsWhiteSpace(inputCharacter) || char.IsPunctuation(inputCharacter);
         }
 
+        public static bool IsACommitCharacterWithNoOutput(this uint key, char inputCharacter)
+        {
+            return key == (uint)VSConstants.VSStd2KCmdID.RETURN || key == (uint)VSConstants.VSStd2KCmdID.TAB;
+        }
+
         public static bool IsADeletionCharacter(this uint key)
         {
             return key == (uint)VSConstants.VSStd2KCmdID.BACKSPACE || key == (uint)VSConstants.VSStd2KCmdID.DELETE;

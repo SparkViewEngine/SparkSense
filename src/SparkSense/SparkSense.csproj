@@ -191,6 +191,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Resources\Property.png" />
+    <Resource Include="Resources\Class.png" />
+    <Resource Include="Resources\Method.png" />
+    <Resource Include="Resources\Fields.png" />
+    <Resource Include="Resources\Event.png" />
+    <Resource Include="Resources\Namespace.png" />
     <Content Include="SparkIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

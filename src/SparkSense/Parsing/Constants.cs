@@ -27,6 +27,13 @@ namespace SparkSense.Parsing
         public const string ICON_SparkLocalVariable = "SparkLocalVariable";
         public const string ICON_SparkMacro = "SparkMacro";
         public const string ICON_SparkMacroParameter = "SparkMacroParameter";
+        
+        public const string ICON_Property = "Property";
+        public const string ICON_Method = "Method";
+        public const string ICON_Field = "Field";
+        public const string ICON_Class = "Class";
+        public const string ICON_Event = "Event";
+        public const string ICON_Namespace = "Namespace";
 
     }
 }
