@@ -98,9 +98,6 @@
     <Reference Include="Rhino.Mocks">
       <HintPath>..\packages\RhinoMocks.3.6\lib\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="Spark">
-      <HintPath>..\packages\Spark.1.5.1\lib\NET40\Spark.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -154,6 +151,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Spark\src\Spark\Spark.csproj">
+      <Project>{31929D34-1A68-4A6B-9D8A-B93037163A5A}</Project>
+      <Name>Spark</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SparkSense\SparkSense.csproj">
       <Project>{6E9BC746-755B-460E-8556-A73985E32BAE}</Project>
       <Name>SparkSense</Name>

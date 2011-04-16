@@ -139,10 +139,10 @@ namespace SparkSense.StatementCompletion
         {
             ITextSnapshotLine line = snapshot.GetLineFromPosition(triggerPoint);
             string lineString = line.GetText();
-            var stopChars = new char[] {' ', '\t', '{', '.'};
+            var stopChars = new char[] {' ', '\t', '{', '}', '.', '"', ':'};
             int start = lineString.Substring(0, triggerPoint - line.Start.Position).LastIndexOfAny(stopChars) + line.Start.Position + 1;
-            int length = lineString.Substring(triggerPoint - line.Start.Position).IndexOfAny(stopChars) + triggerPoint - start + 1;
-            _trackingSpan = snapshot.CreateTrackingSpan(start, length, SpanTrackingMode.EdgeInclusive);
+            int length = lineString.Substring(triggerPoint - line.Start.Position).IndexOfAny(stopChars) + triggerPoint - start;
+            _trackingSpan = snapshot.CreateTrackingSpan(start, length < 0 ? 0 : length, SpanTrackingMode.EdgeInclusive);
         }
 
         public void AddCompletionSourceProperties(Dictionary<object, object> properties)

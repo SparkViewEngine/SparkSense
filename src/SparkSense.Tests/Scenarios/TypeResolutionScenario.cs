@@ -22,9 +22,15 @@ namespace SparkSense.Tests.Scenarios
 
         public TypeNavigator TheTypeNavigator { get; private set; }
 
+        protected IViewExplorer TheViewExplorer { get; set; }
+
         protected void GivenReferencedTypes(IEnumerable<Type> types)
         {
             TheTypeNavigator = new TypeNavigator(types);
+            TheViewExplorer = MockRepository.GenerateMock<IViewExplorer>();
+            TheViewExplorer.Expect(x => x.GetTypeNavigator()).Return(TheTypeNavigator);
+            TheViewExplorer.Expect(x => x.GetLocalVariableChunks()).Return(null);
+            TheViewExplorer.Expect(x => x.GetViewDataVariableChunks()).Return(null);
         }
 
         protected void WhenLookingUpTriggerTypes()
@@ -51,7 +57,7 @@ namespace SparkSense.Tests.Scenarios
         {
             Type resolvedType;
             string remainingCode;
-            if (TheTypeNavigator.TryResolveType(codeSnippit, out resolvedType, out remainingCode))
+            if (TheTypeNavigator.TryResolveType(TheViewExplorer, codeSnippit, out resolvedType, out remainingCode))
                 TheResolvedType = resolvedType;
             TheRemainingCode = remainingCode;
         }

@@ -5,87 +5,70 @@ using System.Reflection;
 using System.Windows.Media.Imaging;
 using Fasterflect;
 using Microsoft.VisualStudio.Language.Intellisense;
+using Spark.Compiler;
 using SparkSense.Parsing;
 
 namespace SparkSense.Parser
 {
     public static class CompletionBuilderExtensions
     {
-        public static IEnumerable<Completion> ToCompletionList(this IEnumerable<MethodInfo> methods)
-        {
-            IEnumerable<Completion> completions = methods.Select(
-                x => new Completion(GetDisplayText(x), GetInsertionText(x), GetMemberDescription(x), GetIcon(Constants.ICON_Method), null));
-            return completions;
-        }
-
-        public static IEnumerable<Completion> ToCompletionList(this IEnumerable<PropertyInfo> properties)
-        {
-            IEnumerable<Completion> completions = properties.Select(
-                x => new Completion(GetDisplayText(x), GetInsertionText(x), GetMemberDescription(x), GetIcon(Constants.ICON_Property), null));
-            return completions;
-        }
-
         public static IEnumerable<Completion> ToCompletionList(this IEnumerable<MemberInfo> members)
         {
-            IEnumerable<Completion> completions = members.Select(
-                x =>
-                {
-                    switch (x.MemberType)
+            var grouped = members.GroupBy(m => m.Name).OrderBy(m => m.Key);
+
+            IEnumerable<Completion> completions = grouped.Select(
+                grouping =>
                     {
-                        case MemberTypes.Property:
-                            return new Completion(GetDisplayText(x), GetInsertionText(x), GetMemberDescription(x), GetIcon(Constants.ICON_Property), null);
-                        case MemberTypes.Method:
-                            return new Completion(GetDisplayText(x), GetInsertionText(x), GetMemberDescription(x), GetIcon(Constants.ICON_Method), null);
-                        case MemberTypes.Field:
-                            return new Completion(GetDisplayText(x), GetInsertionText(x), GetMemberDescription(x), GetIcon(Constants.ICON_Field), null);
-                        case MemberTypes.NestedType:
-                        case MemberTypes.TypeInfo:
-                            return new Completion(GetDisplayText(x), GetInsertionText(x), GetMemberDescription(x), GetIcon(Constants.ICON_Class), null);
-                        case MemberTypes.Event:
-                            return new Completion(GetDisplayText(x), GetInsertionText(x), GetMemberDescription(x), GetIcon(Constants.ICON_Event), null);
-                        case MemberTypes.Constructor:
-                            return null;
-                        case MemberTypes.Custom:
-                        case MemberTypes.All:
-                        default:
-                            return new Completion(GetDisplayText(x));
-                    }
-                });
+                        var member = grouping.First();
+                        switch (member.MemberType)
+                        {
+                            case MemberTypes.Property:
+                                return new Completion(GetDisplayText(member), GetInsertionText(member), GetMemberDescription(member), GetIcon(Constants.ICON_Property), null);
+                            case MemberTypes.Method:
+                                return new Completion(GetDisplayText(member), GetInsertionText(member), GetMemberDescription(grouping), GetIcon(Constants.ICON_Method), null);
+                            case MemberTypes.Field:
+                                return new Completion(GetDisplayText(member), GetInsertionText(member), GetMemberDescription(member), GetIcon(Constants.ICON_Field), null);
+                            case MemberTypes.NestedType:
+                            case MemberTypes.TypeInfo:
+                                return new Completion(GetDisplayText(member), GetInsertionText(member), GetMemberDescription(member), GetIcon(Constants.ICON_Class), null);
+                            case MemberTypes.Event:
+                                return new Completion(GetDisplayText(member), GetInsertionText(member), GetMemberDescription(member), GetIcon(Constants.ICON_Event), null);
+                            case MemberTypes.Constructor:
+                                return null;
+                            case MemberTypes.Custom:
+                            case MemberTypes.All:
+                            default:
+                                return new Completion(GetDisplayText(member));
+                        }
+                    });
             return completions.Where(x => x != null);
         }
 
-        private static string GetDisplayText(MemberInfo member)
+        public static IEnumerable<Completion> ToCompletionList(this IEnumerable<string> elements)
         {
-            string name = member.Name;
-            switch (member.MemberType)
-            {
-                case MemberTypes.Constructor:
-                    break;
-                case MemberTypes.Event:
-                    break;
-                case MemberTypes.Field:
-                    break;
-                case MemberTypes.Method:
-                    break;
-                case MemberTypes.Property:
-                    break;
-                case MemberTypes.TypeInfo:
-                    var type = (Type)member;
-                    if (type.IsGenericTypeDefinition)
-                        name = string.Format("{0}<>", name.Split('`').First());
-                    break;
-                case MemberTypes.Custom:
-                    break;
-                case MemberTypes.NestedType:
-                    break;
-                case MemberTypes.All:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            if (elements == null) return new List<Completion>();
+            IEnumerable<Completion> completions =
+                elements.Where(x => !string.IsNullOrEmpty(x) && !x.StartsWith("<")).Distinct().Select(
+                    x => new Completion(x, x, string.Format("{0} Namespace", x), GetIcon(Constants.ICON_Namespace), null));
+            return completions;
+        }
 
-            string displayText = string.Format("{0}", name);
-            return displayText;
+        public static IEnumerable<Completion> ToCompletionList(this IEnumerable<LocalVariableChunk> elements)
+        {
+            if (elements == null) return new List<Completion>();
+            IEnumerable<Completion> completions =
+                elements.Distinct().Select(
+                    x => new Completion(x.Name, x.Name, string.Format("{0} Local Variable", x), GetIcon(Constants.ICON_SparkLocalVariable), null));
+            return completions;
+        }
+
+        public static IEnumerable<Completion> ToCompletionList(this IEnumerable<ViewDataChunk> elements)
+        {
+            if (elements == null) return new List<Completion>();
+            IEnumerable<Completion> completions =
+                elements.Distinct().Select(
+                    x => new Completion(x.Name, x.Name, string.Format("{0} View Data Item", x), GetIcon(Constants.ICON_SparkLocalVariable), null));
+            return completions;
         }
 
         private static string GetInsertionText(MemberInfo member)
@@ -120,6 +103,14 @@ namespace SparkSense.Parser
 
             string insertionText = string.Format("{0}", name);
             return insertionText;
+        }
+
+        private static string GetMemberDescription(IEnumerable<MemberInfo> members)
+        {
+            return string.Format(
+                "{0}{1}", GetMemberDescription(members.First()), members.Count() > 1
+                                                                     ? string.Format(" (+{0} overloads)", members.Count() - 1)
+                                                                     : string.Empty);
         }
 
         private static string GetMemberDescription(MemberInfo member)
@@ -165,12 +156,38 @@ namespace SparkSense.Parser
             return description;
         }
 
-        public static IEnumerable<Completion> ToCompletionList(this IEnumerable<string> elements)
+        private static string GetDisplayText(MemberInfo member)
         {
-            IEnumerable<Completion> completions =
-                elements.Where(x => !string.IsNullOrEmpty(x) && !x.StartsWith("<")).Distinct().Select(
-                    x => new Completion(x, x, string.Format("{0} Namespace", x), GetIcon(Constants.ICON_Namespace), null));
-            return completions;
+            string name = member.Name;
+            switch (member.MemberType)
+            {
+                case MemberTypes.Constructor:
+                    break;
+                case MemberTypes.Event:
+                    break;
+                case MemberTypes.Field:
+                    break;
+                case MemberTypes.Method:
+                    break;
+                case MemberTypes.Property:
+                    break;
+                case MemberTypes.TypeInfo:
+                    var type = (Type)member;
+                    if (type.IsGenericTypeDefinition)
+                        name = string.Format("{0}<>", name.Split('`').First());
+                    break;
+                case MemberTypes.Custom:
+                    break;
+                case MemberTypes.NestedType:
+                    break;
+                case MemberTypes.All:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            string displayText = string.Format("{0}", name);
+            return displayText;
         }
 
         private static BitmapImage GetIcon(string iconName)

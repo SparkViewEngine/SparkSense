@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Spark.Parser.Syntax;
+using SparkSense.Parser;
 
 namespace SparkSense.Parsing
 {
@@ -13,7 +14,7 @@ namespace SparkSense.Parsing
     {
         public static IList<Node> ParseNodes(string content)
         {
-            var grammar = new MarkupGrammar();
+            var grammar = new CompletionGrammar();
             var result = grammar.Nodes(Source(content));
             return result.Value;
         }
@@ -42,13 +43,20 @@ namespace SparkSense.Parsing
         public static Type ParseContext(string content, int position)
         {
             var contentChars = content.ToCharArray();
+
+            if (IsExpression(content, position))
+                return typeof(ExpressionNode);
+            if (IsPositionInElementName(content, position))
+                return typeof(ElementNode);
+            if (IsPositionInAttribute(content, position))
+                return typeof(AttributeNode);
+
             var previousChar = position > 0 ? contentChars[position - 1] : char.MinValue;
             switch (previousChar)
             {
                 case Constants.OPEN_ELEMENT:
                 case Constants.COLON:
                     return typeof(ElementNode);
-                case Constants.SPACE:
                 case Constants.DOUBLE_QUOTE:
                 case Constants.SINGLE_QUOTE:
                     return typeof(AttributeNode);
@@ -60,14 +68,6 @@ namespace SparkSense.Parsing
                 default:
                     break;
             }
-
-            if (IsPositionInElementName(content, position))
-                return typeof(ElementNode);
-            if (IsPositionInAttribute(content, position))
-                return typeof(AttributeNode);
-            if (IsExpression(content, position))
-                return typeof(ExpressionNode);
-
             return typeof(TextNode);
         }
 

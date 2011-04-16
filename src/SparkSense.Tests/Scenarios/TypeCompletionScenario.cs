@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.Language.Intellisense;
 using SparkSense.Parser;
+using SparkSense.Parsing;
 
 namespace SparkSense.Tests.Scenarios
 {
@@ -15,7 +17,7 @@ namespace SparkSense.Tests.Scenarios
 
         protected void WhenTriggeringACompletion(string codeSnippit)
         {
-            var completionBuilder = new CompletionBuilder(TheTypeNavigator);
+            var completionBuilder = new CompletionBuilder(TheViewExplorer);
             WhenLookingUpTriggerTypes();
             TheCompletionList = completionBuilder.ToCompletionList(codeSnippit);            
         }

@@ -9,6 +9,7 @@ using System;
 using Spark;
 using System.Diagnostics;
 using System.Reflection;
+using SparkSense.Parser;
 
 namespace SparkSense.Parsing
 {
@@ -29,7 +30,7 @@ namespace SparkSense.Parsing
             _viewLoader = new ViewLoader
             {
                 ViewFolder = _projectExplorer.GetViewFolder(),
-                SyntaxProvider = new DefaultSyntaxProvider(new ParserSettings())
+                SyntaxProvider = new CompletionSyntaxProvider()
             };
             InitViewChunks();
         }
@@ -53,15 +54,30 @@ namespace SparkSense.Parsing
         public IList<string> GetLocalVariables()
         {
             var allLocalVariables = new List<string>();
-            var locals = GetViewChunks<LocalVariableChunk>();
-            var assigned = GetViewChunks<AssignVariableChunk>();
-            var viewData = GetViewChunks<ViewDataChunk>();
+            var locals = GetLocalVariableChunks();
+            var assigned = GetAssignedVariableChunks();
+            var viewData = GetViewDataVariableChunks();
 
-            locals.ToList().ForEach(x => allLocalVariables.Add(x.Name));
+            locals.ToList().ForEach(x => allLocalVariables.Add(x.Value));
             assigned.ToList().ForEach(x => allLocalVariables.Add(x.Name));
             viewData.ToList().ForEach(x => allLocalVariables.Add(x.Name));
 
             return allLocalVariables;
+        }
+
+        public IEnumerable<ViewDataChunk> GetViewDataVariableChunks()
+        {
+            return GetViewChunks<ViewDataChunk>();
+        }
+
+        public IEnumerable<AssignVariableChunk> GetAssignedVariableChunks()
+        {
+            return GetViewChunks<AssignVariableChunk>();
+        }
+
+        public IEnumerable<LocalVariableChunk> GetLocalVariableChunks()
+        {
+            return GetViewChunks<LocalVariableChunk>();
         }
 
         public IList<string> GetPossibleMasterLayouts()
@@ -131,14 +147,26 @@ namespace SparkSense.Parsing
         private IEnumerable<T> GetViewChunks<T>()
         {
             var chunks =
-                _viewLoader.Load(_viewPath)
+                LoadChunks(_viewPath)
                 .Where(chunk => chunk is T).Cast<T>();
             return chunks;
         }
 
+        private IList<Chunk> LoadChunks(string viewPath)
+        {
+            try
+            {
+                return _viewLoader.Load(viewPath) ?? new List<Chunk>();
+            }
+            catch (CompilerException)
+            {
+                return new List<Chunk>();
+            }
+        }
+
         private IEnumerable<T> GetAllChunks<T>()
         {
-            _viewLoader.Load(_viewPath);
+            LoadChunks(_viewPath);
             var allChunks =
                 _viewLoader.GetEverythingLoaded()
                 .SelectMany(list => list)
@@ -153,7 +181,7 @@ namespace SparkSense.Parsing
 
             if (master.ViewFile == null) return false;
 
-            _viewLoader.Load(master.Path);
+            LoadChunks(master.Path);
             return true;
         }
 

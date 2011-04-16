@@ -51,7 +51,7 @@ namespace SparkSense.StatementCompletion.CompletionSets
         {
             _triggerPoint = triggerPoint;
             _viewExplorer = viewExplorer;
-            _completionBuilder = new CompletionBuilder(_viewExplorer.GetTypeNavigator());
+            _completionBuilder = new CompletionBuilder(_viewExplorer);
             return new T { ApplicableTo = trackingSpan };
         }
 

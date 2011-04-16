@@ -97,9 +97,6 @@
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Spark">
-      <HintPath>..\packages\Spark.1.5.1\lib\NET40\Spark.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -194,7 +191,7 @@
     <Resource Include="Resources\Property.png" />
     <Resource Include="Resources\Class.png" />
     <Resource Include="Resources\Method.png" />
-    <Resource Include="Resources\Fields.png" />
+    <Resource Include="Resources\Field.png" />
     <Resource Include="Resources\Event.png" />
     <Resource Include="Resources\Namespace.png" />
     <Content Include="SparkIcon.png">
@@ -206,7 +203,12 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Spark\src\Spark\Spark.csproj">
+      <Project>{31929D34-1A68-4A6B-9D8A-B93037163A5A}</Project>
+      <Name>Spark</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\VSSDK\Microsoft.VsSDK.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

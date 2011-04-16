@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Spark.Compiler;
 
 namespace SparkSense.Parsing
 {
@@ -16,5 +17,8 @@ namespace SparkSense.Parsing
         IList<string> GetMembers();
         void InvalidateView(string newContent);
         TypeNavigator GetTypeNavigator();
+        IEnumerable<LocalVariableChunk> GetLocalVariableChunks();
+        IEnumerable<ViewDataChunk> GetViewDataVariableChunks();
+        IEnumerable<AssignVariableChunk> GetAssignedVariableChunks();
     }
 }

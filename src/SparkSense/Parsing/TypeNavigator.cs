@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Fasterflect;
 using Spark;
+using Spark.Compiler;
 
 namespace SparkSense.Parsing
 {
@@ -71,7 +72,7 @@ namespace SparkSense.Parsing
 
         public IEnumerable<Type> GetTriggerTypes()
         {
-            var types = Types.Where(t => (t.IsPublic || t.IsNestedPublic) && t.Members(_commonFlags | Flags.Static | Flags.Instance).Count > 0);
+            var types = Types.Where(t => (t.IsPublic || t.IsNestedPublic));
             return types;
         }
 
@@ -99,21 +100,22 @@ namespace SparkSense.Parsing
             return fields;
         }
 
-        public bool TryResolveType(string codeSnippit, out Type resolvedType, out string remainingCode)
+        public bool TryResolveType(IViewExplorer viewExplorer, string codeSnippit, out Type resolvedType, out string remainingCode)
         {
             resolvedType = null;
             remainingCode = codeSnippit;
 
             var fragments = codeSnippit.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries).Reverse();
 
+            string instanceName = string.Empty;
             foreach (var fragment in fragments)
             {
-                resolvedType = GetResolvedTypeByInstanceKeyword(fragment) ?? GetResolvedTypeByName(fragment);
+                resolvedType = GetResolvedTypeByInstance(viewExplorer, fragment, out instanceName) ?? GetResolvedTypeByName(fragment);
                 if (resolvedType != null)
                     break;
             }
 
-            if (resolvedType != null) remainingCode = GetRemainingCode(fragments, resolvedType);
+            if (resolvedType != null) remainingCode = GetRemainingCode(fragments, resolvedType, instanceName);
 
             return resolvedType != null;
         }
@@ -144,22 +146,49 @@ namespace SparkSense.Parsing
                        : String.Empty;
         }
 
-        private string GetRemainingCode(IEnumerable<string> fragments, Type resolvedType)
+        private string GetRemainingCode(IEnumerable<string> fragments, Type resolvedType, string instanceName)
         {
             string typeName = resolvedType.Name;
-            string remainingCode = String.Join(".", fragments.TakeWhile(s => s != typeName && s != "this").Reverse());
+            string remainingCode = String.Join(".", fragments.TakeWhile(s => s != typeName && s != instanceName).Reverse());
             return remainingCode;
         }
 
-        private Type GetResolvedTypeByInstanceKeyword(string fragment)
+        private Type GetResolvedTypeByInstance(IViewExplorer viewExplorer, string fragment, out string instanceName)
         {
+            instanceName = string.Empty;
             Type resolvedType = null;
             if (fragment == "this")
             {
-                IEnumerable<Type> resolvedTypes = Types.Where(t => typeof (SparkViewBase).IsAssignableFrom(t));
+                instanceName = "this";
+                IEnumerable<Type> resolvedTypes = Types.Where(t => typeof(SparkViewBase).IsAssignableFrom(t));
                 //BUG: This will potentially return the wrong Type if there is more than one inheritor of SparkViewBase
                 resolvedType = resolvedTypes.FirstOrDefault(t => t.Name != typeof(SparkViewBase).Name);
             }
+            else
+            {
+                resolvedType = GetResolvedTypeFromViewVariables(fragment, viewExplorer);
+                instanceName = resolvedType != null ? fragment : string.Empty;
+            }
+
+            return resolvedType;
+        }
+
+        private Type GetResolvedTypeFromViewVariables(string fragment, IViewExplorer viewExplorer)
+        {
+            Type resolvedType = null;
+            var locals = viewExplorer.GetLocalVariableChunks();
+            var viewData = viewExplorer.GetViewDataVariableChunks();
+            if (locals != null)
+            {
+                var localFound = locals.Where(x => x.Value == fragment).FirstOrDefault();
+                if (localFound != null) resolvedType = Type.GetType(localFound.Type, false);
+            }
+            if (viewData != null)
+            {
+                var viewDataFound = viewData.Where(x => x.Key == fragment).FirstOrDefault();
+                if (resolvedType == null && viewDataFound != null) resolvedType = Type.GetType(viewDataFound.Type, false);
+            }
+
             return resolvedType;
         }
 
