@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>Spark View Page with Layout</Name>
+    <Description>View Page with Layout with Spark syntax (spark)</Description>
+    <Icon>SparkIcon.png</Icon>
+    <ProjectType>CSharp</ProjectType>
+    <NumberOfParentCategoriesToRollUp>3</NumberOfParentCategoriesToRollUp>
+    <ShowByDefault>true</ShowByDefault>
+    <DefaultName>ViewPage.spark</DefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <ProjectItem ItemType="Content" TargetFileName="$fileinputname$.spark" ReplaceParameters="true">ViewPageWithLayout.spark</ProjectItem>
+  </TemplateContent>
+</VSTemplate>
