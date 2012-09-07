@@ -88,7 +88,7 @@ namespace SparkSense.Parsing
             string filename;
             uint format;
             adapter.GetCurFile(out filename, out format);
-            return filename.Replace(GetViewRoot(filename), string.Empty).TrimStart('\\');
+        	return GetViewPath(filename);
         }
 
         public void SetViewContent(string viewPath, string content)
@@ -120,7 +120,7 @@ namespace SparkSense.Parsing
         {
             string activeDocumentPath;
             if (!TryGetActiveDocumentPath(out activeDocumentPath)) return null;
-            return activeDocumentPath.Replace(GetViewRoot(activeDocumentPath), string.Empty).TrimStart('\\');
+        	return GetViewPath(activeDocumentPath);
         }
 
         public bool HasView(string viewPath)
@@ -164,14 +164,17 @@ namespace SparkSense.Parsing
 
             string fullPath = projectItem.Properties.Item("FullPath").Value.ToString();
 
-            int viewsLocationStart = fullPath.LastIndexOf("Views");
-            string viewRoot = fullPath.Substring(0, viewsLocationStart + 5);
-            string foundView = fullPath.Replace(viewRoot, string.Empty).TrimStart('\\');
+            var foundView = GetViewPath(fullPath);
 
-            return foundView;
+        	return foundView;
         }
 
-        private static string GetViewRoot(string activeDocumentPath)
+    	private static string GetViewPath(string fullPath) {
+    		string viewRoot = GetViewRoot(fullPath);
+    		return fullPath.Replace(viewRoot, string.Empty).TrimStart('\\');
+    	}
+
+    	private static string GetViewRoot(string activeDocumentPath)
         {
             int viewsLocationStart = activeDocumentPath.LastIndexOf("Views");
             return viewsLocationStart != -1 ? activeDocumentPath.Substring(0, viewsLocationStart + 5) : null;
