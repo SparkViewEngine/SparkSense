@@ -58,7 +58,7 @@ namespace SparkSense.Parsing
             var assigned = GetAssignedVariableChunks();
             var viewData = GetViewDataVariableChunks();
 
-            locals.ToList().ForEach(x => allLocalVariables.Add(x.Value));
+            locals.ToList().ForEach(x => allLocalVariables.Add(x.Name));
             assigned.ToList().ForEach(x => allLocalVariables.Add(x.Name));
             viewData.ToList().ForEach(x => allLocalVariables.Add(x.Name));
 
