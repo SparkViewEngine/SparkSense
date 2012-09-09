@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.IO;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell.Design;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -158,7 +159,7 @@ namespace SparkSense.Parsing
                     ScanProjectItemForViews(child);
         }
 
-        private static string GetProjectItemMap(ProjectItem projectItem)
+        private string GetProjectItemMap(ProjectItem projectItem)
         {
             if (projectItem.Properties == null) return null;
 
@@ -169,16 +170,24 @@ namespace SparkSense.Parsing
         	return foundView;
         }
 
-    	private static string GetViewPath(string fullPath) {
+    	private string GetViewPath(string fullPath) {
     		string viewRoot = GetViewRoot(fullPath);
+			if(string.IsNullOrEmpty(viewRoot))
+				return fullPath;
     		return fullPath.Replace(viewRoot, string.Empty).TrimStart('\\');
     	}
 
-    	private static string GetViewRoot(string activeDocumentPath)
+    	private string GetViewRoot(string activeDocumentPath)
         {
             int viewsLocationStart = activeDocumentPath.LastIndexOf("Views");
-            return viewsLocationStart != -1 ? activeDocumentPath.Substring(0, viewsLocationStart + 5) : null;
+            return viewsLocationStart != -1 ? activeDocumentPath.Substring(0, viewsLocationStart + 5) : GetProjectRoot();
         }
+
+		private string GetProjectRoot() 
+		{
+			var projectFileName = _services.VsEnvironment.ActiveDocument.ProjectItem.ContainingProject.FullName;
+			return Path.GetDirectoryName(projectFileName);
+		}
 
         private IVsHierarchy GetHierarchy()
         {
