@@ -1,0 +1,6 @@
+﻿<use master="Html" />
+<use namespace="$rootnamespace$" />
+
+<content:view>
+    
+</content:view>
